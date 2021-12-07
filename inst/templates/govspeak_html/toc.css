@@ -1,0 +1,24 @@
+/* Table of contents */
+#toc ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#toc li {
+	padding-top: 10px;
+	line-height: 1.3;
+	list-style-type: none
+	display: table
+}
+
+#toc a {
+	display: inline-block;
+	vertical-align: top
+	color: #fff
+	text-decoration: none
+}
+
+
+
+
