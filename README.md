@@ -1,10 +1,65 @@
-This package adds govespeak markdown functionality to rmarkdown. It allows for a HTML preview of the document. It is designed to show how your document will look when 
-published on gov.uk.
+# 👀 What is rgovspeak?
 
-Note that the contents list shows all headings for easier navigation when previewing. When published only top level numbered headings will
-be shown.
+**rgovspeak** is an r package that allows govspeak markdown to be used in rmarkdown documents.
 
-All govspeak tags are implemented except the acronym tag.
+**rgovspeak integrates natively with rmarkdown** allowing the use of govspeak markdown in your reproducible analytical pipeline (rap). 
+It provides a new output format for rmarkdown documents producing a whitehall publisher compatible markdown file and a html preview
+showing what the document will look like when published on gov.uk.
+
+🎉 **Version 0.3 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases).
+
+<br>
+
+# 🤖 Why use rgovspeak?
+
+rgovspeak is designed to be used to generate single page documents suitable for publication on gov.uk. It allows R users to integrate the publishing step into their RAP's. Users can integrate rgovspeak into their existing piplines to easily move over to the production of html reports and documents. By using rgovspeak in your project, you get the following benefits:
+
+- **Reproducibility** of document generation.
+- A **simple and clear** way to preview how your document will look on gov.uk.
+- **Plug-and-play integrations**: add the final step to your rap and get your work published.
+- A standalone html document that can be passed around your team for easy review, no other files needed.
+- Painless creation of a whitehall publisher compatible markdown and image files.
+- Save time and money for you and your publishing team.
+
+# 🎮 Features
+
+### 1. 🗃 a new govspeak document output type
+ 
+Simply add the following header to your Rmd doc
+
+    ---
+    title: "rgovspeak doc"
+    date: "`r format(Sys.time(), '%d %B %Y')`"
+    output: rgovspeak::govspeak
+    ---
+
+### 2. ♻️ fully govspeak compatible
+
+All of the markup listed in the govspeak [guide](https://govspeak-preview.herokuapp.com/guide) is implemented. You can use it directly in
+your document.
+
+
+### 3. 📊 Visualize Statistics
+
+Use R blocks as you would with any rmarkdown document. Image files for plots are automatically created at the correct size and resolution
+for publication on gov.uk.
+
+### 4. 🧐 Preview your document
+
+Once you've written your document, you need a way of seeing what was produced and how it will look. rgovspeak offers a html preview allowing you to see how your document will look and behave on gov.uk.
+
+### 5. 🛠 Publication documents auto generated
+
+No need to learn whitehall publisher rgovspeak generates compatible files so you don't need to worry about it. Save yourself and your publishing team time by reducing the amount of review work needed to get published.
+
+# 🤸 Getting Started
+
+## 💾 Install rgovspeak
 
 To use install the package in Rstudio. Then go file -> new-> Rmarkdown document. In the pop up window select from template and select the govespeak option. The govespeak user guide
 will be opened and you can press knit to see a preview of the document.
+
+
+#### Step 2: write your markdown document
+
+Write your markdown document using govspeak markup where you want and when your ready press knit.
