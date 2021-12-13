@@ -3,6 +3,7 @@
 html_template <- function(template_name, template_path, template_dependencies, pandoc_args = NULL, ...) {
 
     args <- list(...)
+
     ## For compatibility with pkgdown
     args$template <- NULL
 
@@ -18,7 +19,7 @@ html_template <- function(template_name, template_path, template_dependencies, p
 
     ## Other arguments
     govuk_lua <- pkg_file("templates/govspeak_html/govuk.lua")
-    pandoc_args <- c(pandoc_args, "--variable", paste0(template_name, ":true"), "--lua-filter", govuk_lua)
+    pandoc_args <- c(pandoc_args, "--lua-filter", govuk_lua)
 
     ## Call rmarkdown::html_document
     html_document_args <- list(
@@ -30,6 +31,17 @@ html_template <- function(template_name, template_path, template_dependencies, p
     html_document_args <- append(html_document_args, args)
     html_document_func <- rmarkdown::html_document
 
-    do.call(html_document_func, html_document_args)
+    format <- do.call(html_document_func, html_document_args)
 
+    # Add post processor to convert the markdown to govspeak
+    format$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
+        preview_file <- file_with_ext(output_file, "md")
+        print(paste0("Input file: " , input_file))
+        print(paste0("Output file: ", output_file))
+        convert_md(input_file, remove_blocks = TRUE)
+
+        output_file
+    }
+
+    format
 }

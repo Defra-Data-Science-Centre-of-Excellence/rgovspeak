@@ -4,16 +4,11 @@
 \alias{govspeak}
 \title{FUNCTION_TITLE}
 \usage{
-govspeak(
-  fig_width = 960/72,
-  fig_height = 640/72,
-  fig_caption = TRUE,
-  dpi = 72,
-  toc = TRUE,
-  ...
-)
+govspeak(...)
 }
 \arguments{
+\item{...}{PARAM_DESCRIPTION}
+
 \item{fig_width}{PARAM_DESCRIPTION, Default: 960/72}
 
 \item{fig_height}{PARAM_DESCRIPTION, Default: 640/72}
@@ -23,8 +18,6 @@ govspeak(
 \item{dpi}{PARAM_DESCRIPTION, Default: 72}
 
 \item{toc}{PARAM_DESCRIPTION, Default: TRUE}
-
-\item{...}{PARAM_DESCRIPTION}
 }
 \value{
 OUTPUT_DESCRIPTION
