@@ -16,23 +16,26 @@
 #' }
 #' @rdname govspeak
 #' @export
-govspeak <- function(fig_width = 960 / 72, fig_height = 640 / 72, fig_caption = TRUE, dpi = 72, toc = TRUE, ...) {
+govspeak <- function(...) {
     html_template(
-        template_name = "html_clean",
+        template_name = "govespeak_html",
         template_path = "templates/template.html",
         template_dependencies = list(html_dependency_govspeak()),
-        fig_width = fig_width,
-        fig_height = fig_height,
-        fig_caption = fig_caption,
-        toc = toc,
+        fig_width = 960 / 72,
+        fig_height = 640 / 72,
+        fig_caption = TRUE,
+        dpi = 72,
+        toc = TRUE,
         toc_depth = 3,
+        keep_md = TRUE,
+        mathjax = NULL,
         ...
     )
 }
 
 # html js and css
 html_dependency_govspeak <- function() {
-  htmltools::htmlDependency(name = "clean",
+  htmltools::htmlDependency(name = "govspeak",
                  version = "0.1",
                  src = system.file("templates/govspeak_html", package = "rgovspeak"),
                  stylesheet = c("application.css", 'application2.css', 'toc.css'))

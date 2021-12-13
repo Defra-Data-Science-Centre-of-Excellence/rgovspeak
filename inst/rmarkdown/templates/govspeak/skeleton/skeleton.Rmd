@@ -6,8 +6,24 @@ output: rgovspeak::govspeak
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(
+  echo = FALSE,
+
+  # If you wish to see these in the preview set to TRUE. 
+  # They must be FALSE when you generate the final MD file.
+  cache = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  
+  # Do not edit these values
+  fig.width=960 / 72,
+  fig.height=640 / 72,
+  dpi = 72,
+  fig.path = "images/"
+)
+
 library(knitr)
+library(ggplot2)
 ```
 
 ## What is this page?
@@ -90,6 +106,57 @@ This is what that table looks like on GOV.UK:
 ```{r echo=TRUE}
 kable(head(iris))
 ```
+
+## Plots
+
+Plot image files will be created at 960 x 640 @ 72 dpi (defined at the top of this document) **Do not change the image size as this is set to that which is accepted on gov.uk**.
+Images will be saved in a folder called "images" within the same folder as this Rmd file.
+
+Image filenames are created by the code chunk title that generates the image, eg, `{r title}`
+
+The following code chunk creates three images that display the same data in different formats. The three image files produced within this single chunk will be named:
+
+* 1-abc-1.png
+* 1-abc-2.png
+* 1-abc-3.png
+
+
+    `{r 1-abc}
+      df <- data.frame(x = rep(2011:2016, each = 3),
+                 y = sample(1:4, 18, replace = TRUE),
+                 colour = rep(LETTERS[1:3], 6))
+      ggplot(df, aes(x = x, y = y)) +
+        geom_col(position = "dodge",
+                 aes(fill = colour))
+      ggplot(df, aes(x = x, y = y)) +
+        geom_col(position = "stack",
+                 aes(fill = colour))
+      ggplot(df, aes(x = x, y = y)) +
+        geom_col(position = "fill",
+                    aes(fill = colour))
+    `
+    
+    
+```{r 1-abc}
+df <- data.frame(x = rep(2011:2016, each = 3),
+                 y = sample(1:4, 18, replace = TRUE),
+                 colour = rep(LETTERS[1:3], 6))
+ggplot(df, aes(x = x, y = y)) +
+        geom_col(position = "dodge",
+                 aes(fill = colour))
+ggplot(df, aes(x = x, y = y)) +
+        geom_col(position = "stack",
+                 aes(fill = colour))
+ggplot(df, aes(x = x, y = y)) +
+        geom_col(position = "fill",
+                 aes(fill = colour))
+```
+
+Please title your code chunks using an increasing number sequence as the first part of the title. The subsequent string should have a meaningful name for the image. For example:
+
+* 1-mortality_statistics
+* 2-AMR_statistics
+* 3-AMR_by_sex
 
 ## Bulleted lists
 
@@ -312,8 +379,6 @@ This is how it works, mouse over the acronyms.
 ### Unordered lists
 
 ## Bulleted lists
-
-
 
 Hyphens or plus signs at the start of each line are not implemented. Use * instead.
 
