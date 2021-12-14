@@ -33,13 +33,28 @@ html_template <- function(template_name, template_path, template_dependencies, p
 
     format <- do.call(html_document_func, html_document_args)
 
+    # Set our knitter options here
+    format$pre_knit <- function(input_file) {
+        # Get the environment that contains the knitr options
+        frames <- sys.frames()
+        e <- frames[[length(frames) - 1]]
+
+        # Set our options to output the correct image sizes and remove blocks from the md file
+        e$output_format$knitr$opts_chunk$dpi <- 72
+        e$output_format$knitr$opts_chunk <- append(e$output_format$knitr$opts_chunk,
+                                                   list(fig.path = "images/",
+                                                        echo = FALSE,
+                                                        cache = FALSE,
+                                                        warning = FALSE,
+                                                        message = FALSE))
+
+    }
+
     # Add post processor to convert the markdown to govspeak
     format$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
-        preview_file <- file_with_ext(output_file, "md")
-        print(paste0("Input file: " , input_file))
-        print(paste0("Output file: ", output_file))
         convert_md(input_file, remove_blocks = TRUE)
-
+        # delete the old .md file
+        unlink(input_file)
         output_file
     }
 

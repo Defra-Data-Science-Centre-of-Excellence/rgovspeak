@@ -6,22 +6,6 @@ output: rgovspeak::govspeak
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = FALSE,
-
-  # If you wish to see these in the preview set to TRUE. 
-  # They must be FALSE when you generate the final MD file.
-  cache = FALSE,
-  warning = FALSE,
-  message = FALSE,
-  
-  # Do not edit these values
-  fig.width=960 / 72,
-  fig.height=640 / 72,
-  dpi = 72,
-  fig.path = "images/"
-)
-
 library(knitr)
 library(ggplot2)
 ```
@@ -109,8 +93,7 @@ kable(head(iris))
 
 ## Plots
 
-Plot image files will be created at 960 x 640 @ 72 dpi (defined at the top of this document) **Do not change the image size as this is set to that which is accepted on gov.uk**.
-Images will be saved in a folder called "images" within the same folder as this Rmd file.
+Plot image files will be created at 960 x 640 @ 72 dpi. Images will be saved in a folder called "images" within the document folder.
 
 Image filenames are created by the code chunk title that generates the image, eg, `{r title}`
 

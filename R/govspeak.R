@@ -17,20 +17,20 @@
 #' @rdname govspeak
 #' @export
 govspeak <- function(...) {
-    html_template(
-        template_name = "govespeak_html",
-        template_path = "templates/template.html",
-        template_dependencies = list(html_dependency_govspeak()),
-        fig_width = 960 / 72,
-        fig_height = 640 / 72,
-        fig_caption = TRUE,
-        dpi = 72,
-        toc = TRUE,
-        toc_depth = 3,
-        keep_md = FALSE,
-        mathjax = NULL,
-        ...
-    )
+  html_template(
+      template_name = "govespeak_html",
+      template_path = "templates/template.html",
+      template_dependencies = list(html_dependency_govspeak()),
+      fig_width=960 / 72,
+      fig_height=640 / 72,
+      dpi = 72,
+      fig_path = "images/",
+      toc = TRUE,
+      toc_depth = 3,
+      keep_md = TRUE,
+      mathjax = NULL,
+      ...
+  )
 }
 
 # html js and css
@@ -161,8 +161,4 @@ remove_rmd_blocks <- function(md_file) {
   # Lazy match on warnings and code blocks
   cleaned_md_file <- gsub("```.*?```", "", md_file)
   return(cleaned_md_file)
-}
-
-file_with_ext <- function(file, ext) {
-  paste(xfun::sans_ext(file), ".", ext, sep = "")
 }
