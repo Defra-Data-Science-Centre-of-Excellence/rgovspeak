@@ -10,5 +10,5 @@ convert_callouts(md_file)
 \item{md_file}{string; markdown file text}
 }
 \description{
-Convert markdown callout sytax to govspeak
+Convert markdown callout syntax to govspeak
 }

@@ -4,7 +4,7 @@
 \alias{convert_md}
 \title{Convert standard markdown file to govspeak}
 \usage{
-convert_md(path, images_folder = "images", remove_blocks = FALSE)
+convert_md(path, images_folder = "images", remove_blocks = TRUE)
 }
 \arguments{
 \item{path}{string; filename (including path) to *.md file for conversion}
