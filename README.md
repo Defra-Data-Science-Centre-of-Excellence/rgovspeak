@@ -38,7 +38,6 @@ Simply add the following header to your Rmd doc
 All of the markup listed in the govspeak [guide](https://govspeak-preview.herokuapp.com/guide) is implemented. You can use it directly in
 your document.
 
-
 ### 3. 📊 Visualize Statistics
 
 Use R blocks as you would with any rmarkdown document. Image files for plots are automatically created at the correct size and resolution
@@ -56,10 +55,31 @@ No need to learn whitehall publisher rgovspeak generates compatible files so you
 
 ## 💾 Install rgovspeak
 
-To use install the package in Rstudio. Then go file -> new-> Rmarkdown document. In the pop up window select from template and select the govespeak option. The govespeak user guide
-will be opened and you can press knit to see a preview of the document.
+Download the latest [release](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.2.0-alpha) and install
+the package in r.
 
+```r
+install.packages("~/Downloads/rgovspeak_0.3.0.zip", repos=NULL)
+```
 
 #### Step 2: write your markdown document
 
-Write your markdown document using govspeak markup where you want and when your ready press knit.
+Create a new rmarkdown file and add the govespeak header.
+
+    ---
+    title: "rgovspeak doc"
+    date: "`r format(Sys.time(), '%d %B %Y')`"
+    output: rgovspeak::govspeak
+    ---
+
+If you are using Rstudio you can select File -> New File -> R Markdown... then select from template in the popup and then find govspeak in 
+the list.
+
+![](rstudio.png)
+
+This will open the template document which contains the govspeak user guide. This explains all the govspeak additions and how to use tables and plots.
+
+When your happy with your document press the knit button.This will render an html preview for you, there will be a markdown document with
+a _govespeak.md prefix and any images will be in the images folder.
+
+These assets can then be uploaded to whitehall publisher or sent to a publication team for upload.
