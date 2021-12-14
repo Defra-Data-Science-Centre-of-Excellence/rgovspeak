@@ -6,7 +6,7 @@
 It provides a new output format for rmarkdown documents producing a whitehall publisher compatible markdown file and a html preview
 showing what the document will look like when published on gov.uk.
 
-🎉 **Version 0.3 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases).
+🎉 **Version 0.3 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.3).
 
 <br>
 
@@ -55,7 +55,7 @@ No need to learn whitehall publisher rgovspeak generates compatible files so you
 
 ## 💾 Install rgovspeak
 
-Download the latest [release](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.2.0-alpha) and install
+Download the latest [release](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.3) and install
 the package in r.
 
 ```r
