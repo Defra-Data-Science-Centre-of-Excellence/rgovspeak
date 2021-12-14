@@ -79,7 +79,7 @@ the list.
 
 This will open the template document which contains the govspeak user guide. This explains all the govspeak additions and how to use tables and plots.
 
-When your happy with your document press the knit button.This will render an html preview for you, there will be a markdown document with
+When your happy with your document press the knit button. This will render an html preview for you, there will be a markdown document with
 a _govespeak.md prefix and any images will be in the images folder.
 
 These assets can then be uploaded to whitehall publisher or sent to a publication team for upload.
