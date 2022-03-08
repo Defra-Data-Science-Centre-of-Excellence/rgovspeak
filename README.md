@@ -84,7 +84,6 @@ This wont create a directory to store everything in any generated files will be 
 
 When your happy with your document press the knit button. This will render an html preview for you, there will be a markdown document with
 
-a _govspeak.md prefix and any images will be in the images folder. 
-
+a _govspeak.md prefix and any images will be in the images folder. The file images.csv shows which images were mapped to each govspeak image tag.
 
 These assets can then be uploaded to whitehall publisher or sent to a publication team for upload.
