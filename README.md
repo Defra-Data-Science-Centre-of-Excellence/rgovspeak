@@ -6,7 +6,7 @@
 It provides a new output format for rmarkdown documents producing a whitehall publisher compatible markdown file and a html preview
 showing what the document will look like when published on gov.uk.
 
-🎉 **Version 0.3 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases).
+🎉 **Version 0.3 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.3).
 
 <br>
 
@@ -55,7 +55,7 @@ No need to learn whitehall publisher rgovspeak generates compatible files so you
 
 ## 💾 Install rgovspeak
 
-Download the latest [release](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.2.0-alpha) and install
+Download the latest [release](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.3) and install
 the package in r.
 
 ```r
@@ -83,6 +83,8 @@ You can also create a new rmarkdown file and add the govespeak header.
 This wont create a directory to store everything in any generated files will be in the current working directory.
 
 When your happy with your document press the knit button. This will render an html preview for you, there will be a markdown document with
-a _govspeak.md prefix and any images will be in the images folder. The file images.csv shows which images were mapped to each govspeak image tag.
+
+a _govspeak.md prefix and any images will be in the images folder. 
+
 
 These assets can then be uploaded to whitehall publisher or sent to a publication team for upload.
