@@ -63,8 +63,16 @@ install.packages("~/Downloads/rgovspeak_0.3.0.zip", repos=NULL)
 ```
 
 #### Step 2: write your markdown document
+If you are using Rstudio you can select File -> New File -> R Markdown... then select from template in the popup and then find govspeak in 
+the list.
 
-Create a new rmarkdown file and add the govespeak header.
+![](rstudio.png)
+
+This will create a folder where all the outputs will be store with the skeleton teplate document.
+
+This shows all the govspeak tags and how to use them. When your ready simply replace the text with your own.
+
+You can also create a new rmarkdown file and add the govespeak header.
 
     ---
     title: "rgovspeak doc"
@@ -72,14 +80,9 @@ Create a new rmarkdown file and add the govespeak header.
     output: rgovspeak::govspeak
     ---
 
-If you are using Rstudio you can select File -> New File -> R Markdown... then select from template in the popup and then find govspeak in 
-the list.
-
-![](rstudio.png)
-
-This will open the template document which contains the govspeak user guide. This explains all the govspeak additions and how to use tables and plots.
+This wont create a directory to store everything in any generated files will be in the current working directory.
 
 When your happy with your document press the knit button. This will render an html preview for you, there will be a markdown document with
-a _govespeak.md prefix and any images will be in the images folder.
+a _govspeak.md prefix and any images will be in the images folder. The file images.csv shows which images were mapped to each govspeak image tag.
 
 These assets can then be uploaded to whitehall publisher or sent to a publication team for upload.

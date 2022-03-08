@@ -57,12 +57,17 @@ pkg_file <- function(...) {
 #' @name convert_md
 #' @title Convert standard markdown file to govspeak
 convert_md <- function(path, images_folder = "images", remove_blocks=TRUE) {
-  md_file <- paste(readLines(path), collapse = "\n")
+  govspeak_file <- paste(readLines(path), collapse = "\n")
 
   img_files <- list.files(paste0(dirname(path), "/", images_folder))
 
-  image_references <- generate_image_references(img_files)
-  govspeak_file <- convert_image_references(image_references, md_file, images_folder)
+  if (length(img_files) > 0) {
+    image_references <- tibble::tibble(image = sort(img_files), id = paste0('!!', 1:length(img_files)))
+    write.csv(image_references, paste0(dirname(path), "/", 'images.csv'), row.names = FALSE)
+
+    govspeak_file <- convert_image_references(image_references, govspeak_file, images_folder)
+  }
+
 
   govspeak_file <- remove_header(govspeak_file)
 
@@ -75,36 +80,6 @@ convert_md <- function(path, images_folder = "images", remove_blocks=TRUE) {
   write(govspeak_file, gsub("\\.knit.md", "_govspeak\\.md", path))
 }
 
-#' Converts image file names to a dataframe, with a field containing the
-#' original image name and corresponding govdown reference
-#' @param img_filenames character vector of files to be referenced in govdown format
-#'   (!!n). The filename must start and end with a number and have text in
-#'   between (eg, "1-abcd-1.png")
-#' @name generate_image_references
-#' @title Generate govdown image references
-generate_image_references <- function(img_filenames) {
-  image_references <- data.frame(image_file = img_filenames)
-  # Strip ext - not image file specific
-  image_references$image_reference <- tools::file_path_sans_ext(image_references$image_file)
-
-  # Capture chunk number and image position within chunk
-  if (!all(as.logical(lapply(image_references$image_file, stringr::str_detect, "^[0-9]")))) {
-    stop("image chunk names must start with a number, which should correspond to their order in the .Rmd file")
-  }
-
-  image_references$pre_dec <- gsub("([0-9]+).*$", "\\1", image_references$image_reference)
-  image_references$post_dec <- gsub(".*([0-9]+)$", "\\1", image_references$image_reference)
-
-  # Convert to decimal for ranking
-  image_references$combined <- as.numeric(paste0(image_references$pre_dec, ".", image_references$post_dec))
-  image_references$image_reference <- paste0("!!", rank(image_references$combined))
-
-  # Keep mapping of image files to govspeak references
-  image_references <- image_references[, c("image_file", "image_reference")]
-  return(image_references)
-}
-
-
 #' Convert markdown image references to govspeak format (!!n)
 #' @param image_references dataframe of image file names and associated govdown
 #'   reference.
@@ -114,13 +89,15 @@ generate_image_references <- function(img_filenames) {
 #' @title Convert markdown image references to govdown
 convert_image_references <- function(image_references, md_file, images_folder) {
   govspeak_image_reference_file <- as.character(md_file)
-  for (i in seq_along(image_references$image_file)) {
-    file_name <- image_references$image_file[i]
-
+  for (i in 1:nrow(image_references)) {
+    file_name <- image_references$image[i]
+print(i)
+print(file_name)
     # Construct markdown reference to image file
+    # ![](images/1-abc-1.png)<!-- -->!
     md_image_format <- paste0("!\\[\\]\\(", images_folder, "/", file_name, "\\)<!-- -->")
-
-    govspeak_reference <- paste0(as.character(image_references$image_reference[i]), "\n")
+print(md_image_format)
+    govspeak_reference <- paste0(as.character(image_references$id[i]), "\n")
 
     # Replace markdown image reference with govspeak reference
     govspeak_image_reference_file <- gsub(md_image_format, govspeak_reference, govspeak_image_reference_file)
