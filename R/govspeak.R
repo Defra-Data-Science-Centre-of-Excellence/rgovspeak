@@ -59,15 +59,28 @@ pkg_file <- function(...) {
 convert_md <- function(path, images_folder = "images", remove_blocks=TRUE) {
   govspeak_file <- paste(readLines(path), collapse = "\n")
 
-  img_files <- list.files(paste0(dirname(path), "/", images_folder))
+  img_files <- fs::dir_ls(paste0(dirname(path), "/", images_folder))
 
   if (length(img_files) > 0) {
-    image_references <- tibble::tibble(image = sort(img_files), id = paste0('!!', 1:length(img_files)))
-    write.csv(image_references, paste0(dirname(path), "/", 'images.csv'), row.names = FALSE)
+    # find all the ones that end -1.png and rename by removing the -1
+    #correct_names <- stringr::str_replace_all(img_files, '-1.png', '.png')
+    # fs::file_move(img_files, stringr::str_replace_all(correct_names, '-1.png', '.png'))
+    filtered_names <- unique(img_files[stringr::str_detect(img_files, '-1.png$')])
+
+    image_references <- tibble::tibble(image = sort(filtered_names),
+                                       id = paste0('!!', 1:length(filtered_names)))
+
 
     govspeak_file <- convert_image_references(image_references, govspeak_file, images_folder)
-  }
 
+    # All the images are linked to the correct !! number so re name the files and save the list
+    correct_names <- stringr::str_replace_all(filtered_names, '-1.png', '.png')
+    fs::file_move(filtered_names, stringr::str_replace_all(correct_names, '-1.png', '.png'))
+
+    write.csv(tibble::tibble(image = sort(basename(correct_names)),
+                             id = paste0('!!', 1:length(correct_names))),
+              paste0(dirname(path), "/", 'images.csv'), row.names = FALSE)
+  }
 
   govspeak_file <- remove_header(govspeak_file)
 
@@ -91,18 +104,20 @@ convert_image_references <- function(image_references, md_file, images_folder) {
   govspeak_image_reference_file <- as.character(md_file)
   for (i in 1:nrow(image_references)) {
     file_name <- image_references$image[i]
-print(i)
-print(file_name)
+
     # Construct markdown reference to image file
     # ![](images/1-abc-1.png)<!-- -->!
-    md_image_format <- paste0("!\\[\\]\\(", images_folder, "/", file_name, "\\)<!-- -->")
-print(md_image_format)
+    md_image_format <- paste0("!\\[\\]\\(", stringr::str_remove(as.character(file_name), '\\./'), "\\)<!-- -->")
+
     govspeak_reference <- paste0(as.character(image_references$id[i]), "\n")
 
     # Replace markdown image reference with govspeak reference
     govspeak_image_reference_file <- gsub(md_image_format, govspeak_reference, govspeak_image_reference_file)
   }
 
+  # delete any remaining image tags
+  govspeak_image_reference_file <- gsub("!\\[\\]\\(.*\\)<!-- -->",
+                                        "", govspeak_image_reference_file)
   return(govspeak_image_reference_file)
 }
 
@@ -114,7 +129,7 @@ print(md_image_format)
 convert_callouts <- function(md_file) {
   # Lazy match on lines starting with ">", which are then flanked with "^"
   # Currently only catches single line callouts
-  converted_md_file <- gsub("(\\n)>[ ]*(.*?\\n)", "\\1^\\2", md_file)
+  gsub("(\\n)>[ ]*(.*?\\n)", "\\1^\\2", md_file)
 }
 
 
@@ -125,8 +140,7 @@ convert_callouts <- function(md_file) {
 remove_header <- function(md_file) {
   # Lazy match on header to extract title
   # Remove substitution if titles must be entered manually
-  cleaned_md_file <- gsub("---\\n.*?---\\n", "", md_file)
-  return(cleaned_md_file)
+  gsub("---\\n.*?---\\n", "", md_file)
 }
 
 
@@ -136,6 +150,5 @@ remove_header <- function(md_file) {
 #' @title Remove R markdown multiline block elements (package warning and code block)
 remove_rmd_blocks <- function(md_file) {
   # Lazy match on warnings and code blocks
-  cleaned_md_file <- gsub("```.*?```", "", md_file)
-  return(cleaned_md_file)
+  gsub("```.*?```", "", md_file)
 }
