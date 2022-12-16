@@ -17,14 +17,24 @@
 #' @rdname govspeak
 #' @export
 govspeak <- function(...) {
+  output <- "output"                      # Dir where all outputs are stored
+  fig_path = paste0(output, "/images/")   # Dir where images are stored
+  data_path = paste0(output, "/datasets") # Dir where datasets are stored
+
+  fs::dir_create(output)
+  fs::dir_create(fig_path)
+  fs::dir_create(data_path)
+
   html_template(
       template_name = "govespeak_html",
       template_path = "templates/template.html",
       template_dependencies = list(html_dependency_govspeak()),
-      fig_width=960 / 72,
-      fig_height=640 / 72,
+      fig_width = 960 / 72,
+      fig_height = 640 / 72,
       dpi = 72,
-      fig_path = "images/",
+      output = output,
+      fig_path = fig_path,
+      data_path = data_path,
       toc = TRUE,
       toc_depth = 3,
       keep_md = TRUE,
@@ -56,41 +66,42 @@ pkg_file <- function(...) {
 #' @export
 #' @name convert_md
 #' @title Convert standard markdown file to govspeak
-convert_md <- function(path, images_folder = "images", remove_blocks=TRUE) {
+convert_md <- function(path, images_folder = "output/images", remove_blocks=TRUE) {
   govspeak_file <- paste(readLines(path), collapse = "\n")
 
-  img_files <- fs::dir_ls(paste0(dirname(path), "/", images_folder))
+  img_files <- fs::dir_ls(images_folder)
 
-  if (length(img_files) > 0) {
-    # find all the ones that end -1.png and rename by removing the -1
-    #correct_names <- stringr::str_replace_all(img_files, '-1.png', '.png')
-    # fs::file_move(img_files, stringr::str_replace_all(correct_names, '-1.png', '.png'))
-    filtered_names <- unique(img_files[stringr::str_detect(img_files, '-1.png$')])
+   if (length(img_files) > 0) {
+     # find all the ones that end -1.png and rename by removing the -1
+     #correct_names <- stringr::str_replace_all(img_files, '-1.png', '.png')
+     # fs::file_move(img_files, stringr::str_replace_all(correct_names, '-1.png', '.png'))
+     filtered_names <- unique(img_files[stringr::str_detect(img_files, '-1.png$')])
 
-    image_references <- tibble::tibble(image = sort(filtered_names),
-                                       id = paste0('!!', 1:length(filtered_names)))
+     image_references <- tibble::tibble(image = sort(filtered_names),
+                                        id = paste0('!!', 1:length(filtered_names)))
 
 
-    govspeak_file <- convert_image_references(image_references, govspeak_file, images_folder)
+     govspeak_file <- convert_image_references(image_references, govspeak_file, images_folder)
 
-    # All the images are linked to the correct !! number so re name the files and save the list
-    correct_names <- stringr::str_replace_all(filtered_names, '-1.png', '.png')
-    fs::file_move(filtered_names, stringr::str_replace_all(correct_names, '-1.png', '.png'))
+     # All the images are linked to the correct !! number so re name the files and save the list
+     correct_names <- stringr::str_replace_all(filtered_names, '-1.png', '.png')
+     fs::file_move(filtered_names, stringr::str_replace_all(correct_names, '-1.png', '.png'))
 
-    write.csv(tibble::tibble(image = sort(basename(correct_names)),
-                             id = paste0('!!', 1:length(correct_names))),
-              paste0(dirname(path), "/", 'images.csv'), row.names = FALSE)
-  }
+     write.csv(tibble::tibble(image = sort(basename(correct_names)),
+                              id = paste0('!!', 1:length(correct_names))),
+               paste0("output", "/", 'images.csv'), row.names = FALSE)
+   }
 
-  govspeak_file <- remove_header(govspeak_file)
+   govspeak_file <- remove_header(govspeak_file)
 
-  govspeak_file <- convert_callouts(govspeak_file)
+   govspeak_file <- convert_callouts(govspeak_file)
 
-  if (remove_blocks) {
-    govspeak_file <- remove_rmd_blocks(govspeak_file)
-  }
+   if (remove_blocks) {
+     govspeak_file <- remove_rmd_blocks(govspeak_file)
+   }
 
-  write(govspeak_file, gsub("\\.knit.md", "_govspeak\\.md", path))
+   file_name <- gsub("\\.knit.md", "_govspeak\\.txt", path)
+   write(govspeak_file, fs::path("output", file_name))
 }
 
 #' Convert markdown image references to govspeak format (!!n)
@@ -116,8 +127,7 @@ convert_image_references <- function(image_references, md_file, images_folder) {
   }
 
   # delete any remaining image tags
-  govspeak_image_reference_file <- gsub("!\\[\\]\\(.*\\)<!-- -->",
-                                        "", govspeak_image_reference_file)
+  govspeak_image_reference_file <- gsub("!\\[\\]\\(.*\\)<!-- -->", "", govspeak_image_reference_file)
   return(govspeak_image_reference_file)
 }
 

@@ -3,6 +3,7 @@
 html_template <- function(template_name, template_path, template_dependencies, pandoc_args = NULL, ...) {
 
     args <- list(...)
+    print(args)
 
     ## For compatibility with pkgdown
     args$template <- NULL
@@ -33,16 +34,16 @@ html_template <- function(template_name, template_path, template_dependencies, p
 
     format <- do.call(html_document_func, html_document_args)
 
-    # Set our knitter options here
+    # Set our knitter options here as not all of those passed as args to govspeak() will be read
     format$pre_knit <- function(input_file) {
         # Get the environment that contains the knitr options
         frames <- sys.frames()
         e <- frames[[length(frames) - 1]]
 
         # Set our options to output the correct image sizes and remove blocks from the md file
-        e$output_format$knitr$opts_chunk$dpi <- 72
+        e$output_format$knitr$opts_chunk$dpi <- args$dpi
         e$output_format$knitr$opts_chunk <- append(e$output_format$knitr$opts_chunk,
-                                                   list(fig.path = "images/",
+                                                   list(fig.path = args$fig_path,
                                                         echo = FALSE,
                                                         cache = FALSE,
                                                         warning = FALSE,
@@ -53,9 +54,18 @@ html_template <- function(template_name, template_path, template_dependencies, p
     # Add post processor to convert the markdown to govspeak
     format$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
         convert_md(input_file, remove_blocks = TRUE)
-        # delete the old .md file
+
+        # Get the contents of the output file and write it to the new location
+        file_name <- output_file
+        output_file <- paste(readLines(output_file), collapse = "\n")
+        write(output_file, fs::path("output", file_name))
+
+        # remove intermediary files
         unlink(input_file)
-        output_file
+        unlink(file_name)
+
+        # return the new output_file for preview
+        fs::path("output", file_name)
     }
 
     format
