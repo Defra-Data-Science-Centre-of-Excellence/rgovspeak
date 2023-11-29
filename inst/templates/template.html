@@ -46,12 +46,16 @@
     function toggleChartAndTable(chart_id) {
       var chart = document.getElementById('chart-' + chart_id);
       var table = document.getElementById('table-' + chart_id);
-      if (chart.classList.contains("mc-hidden")) {
-        chart.classList.remove("mc-hidden");
-        table.classList.add("mc-hidden");
+      if (chart && table) {
+        if (chart.classList.contains("mc-hidden")) {
+          chart.classList.remove("mc-hidden");
+          table.classList.add("mc-hidden");
+        } else {
+          chart.classList.add("mc-hidden");
+          table.classList.remove("mc-hidden");
+        }
       } else {
-        chart.classList.add("mc-hidden");
-        table.classList.remove("mc-hidden");
+        console.error('Chart or table not found for id:', chart_id);
       }
     }
   </script>
