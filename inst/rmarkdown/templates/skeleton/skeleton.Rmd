@@ -413,7 +413,10 @@ output:
 
 If you want to output multiple image types you can use
 
-` image_type: c("svg", "png")`
+` image_type: ['png', 'jpeg', 'pdf', 'svg', 'tiff']`
+
+Only the first format is used in the output document, but the images corresponding to the rest of 
+the formats are also generated.
 
 If your text or elements are too small in your chart it will be easier to increase the size of the 
 element in your plot call.
