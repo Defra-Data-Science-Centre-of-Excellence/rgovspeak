@@ -5,7 +5,6 @@ govspeak <- function(
     fig_width = 960 / 72,
     fig_height = 640 / 72,
     dpi = 72,
-    dev = "svg",
     pandoc_args = NULL,
     ...) {
 
@@ -25,7 +24,7 @@ govspeak <- function(
   pandoc_args <- c(pandoc_args, "--template", template_file, "--lua-filter", govuk_lua, "--lua-filter", chart_filter)
 
   # knitr options
-  knitr_options <- knitr_options_html(fig_width, fig_height, NULL, TRUE, dev = image_type)
+  knitr_options <- knitr_options_html(fig_width, fig_height, NULL, TRUE, dev=image_type)
   knitr_options$opts_chunk <- append(knitr_options$opts_chunk, knitr::opts_chunk$set(fig.process = rename_images))
 
   # despite specifying keep_md in knitr_options it does not get picked up, so set it here
