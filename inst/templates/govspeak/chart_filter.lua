@@ -1,5 +1,5 @@
 -- Global variables
-traverse = 'topdown'
+--traverse = 'topdown'
 chart_id = 0
 
 
@@ -351,14 +351,16 @@ end
 --   - active_table: The updated active table.
 function process_para_block(block, active_table, output)
   local content_str = pandoc.utils.stringify(block)
-  if string.match(content_str, "{barchart%s+([^}]+)}") then
+  if string.match(content_str, "{barchart%s*([^}]*)}") then
+
     -- Check if there is an active table
     if active_table ~= nil then
       local options = extract_barchart_options(content_str)
       table.insert(output, generate_chart_and_button_html(active_table, options)) -- Insert generated chart and button HTML into output
       active_table = nil
     else
-      error("Error: barchart tag found, but no preceding table.")
+      table.insert(output, block) -- Render the paragraph even if it's not after a table
+      return active_table
     end
   else
     -- Check if there is an active table
@@ -370,7 +372,6 @@ function process_para_block(block, active_table, output)
   end
   return active_table
 end
-
 -- Function: Pandoc
 -- Description: This function processes a Pandoc document by iterating over its blocks and performing specific actions based on the block type.
 -- Parameters:
