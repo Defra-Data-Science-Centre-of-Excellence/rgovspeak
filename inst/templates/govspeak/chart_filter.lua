@@ -22,9 +22,12 @@ function find_max_value(table)
   local max_value = 0
   for i, row in ipairs(table.rows) do
     for j, cell in ipairs(row) do
-      local value = tonumber(pandoc.utils.stringify(cell))
-      if value and value > max_value then
-        max_value = value
+      -- Ignore the first column
+      if j ~= 1 then
+        local value = tonumber(pandoc.utils.stringify(cell))
+        if value and value > max_value then
+          max_value = value
+        end
       end
     end
   end
@@ -231,7 +234,9 @@ function generate_chart_body(table, isNegative, isStacked)
         local bar_direction = value < 0 and " mc-bar-negative" or " mc-bar-positive"
         barClass = barClass .. bar_direction
       else
-        width = value / find_max_value(table) * 60
+        print(find_max_value(table))
+        width = value / find_max_value(table) * 65
+        -- width = math.log(value + 1) / math.log(find_max_value(table) + 1) * 60
       end
 
       -- Generate the appropriate div based on the options
