@@ -234,7 +234,6 @@ function generate_chart_body(table, isNegative, isStacked)
         local bar_direction = value < 0 and " mc-bar-negative" or " mc-bar-positive"
         barClass = barClass .. bar_direction
       else
-        print(find_max_value(table))
         width = value / find_max_value(table) * 65
         -- width = math.log(value + 1) / math.log(find_max_value(table) + 1) * 60
       end
