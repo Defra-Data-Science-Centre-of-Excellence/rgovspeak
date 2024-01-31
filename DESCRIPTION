@@ -1,7 +1,7 @@
-Package: rgovspeak
+Package: rgovspeak2
 Type: Package
 Title: Allows govespeak markdown to be used in rmarkdown documents.
-Version: 0.4.0.9000
+Version: 0.4.0.9004
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: Allows govespeak markdown to be used in rmarkdown documents.
@@ -10,4 +10,4 @@ Description: Allows govespeak markdown to be used in rmarkdown documents.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.0
