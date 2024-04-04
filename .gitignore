@@ -5,7 +5,6 @@
 .lintr
 
 *.html
-test*
 main*
 *_old*
 *.txt
