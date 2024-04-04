@@ -29,9 +29,20 @@ application_js_dependency <- function(path) {
 govspeak_dependency <- function() {
   htmltools::htmlDependency(
     name = "govspeak",
-    version = "0.1",
+    version = "0.2",
     src = system.file("templates/govspeak", package = "rgovspeak2"),
-    stylesheet = c("application.css", "application2.css", "toc.css")
+    stylesheet = c(
+      "application.css", 
+      "application2.css", 
+      "html_publication.css", 
+      "organisation_logo.css", 
+      "inverse_header.css", 
+      "contents_list.css",
+      "toc.css",
+      "print_link.css",
+      "govspeak_html_publication.css",
+      "govspeak.css",
+      "back_to_top.css")
   )
 }
 
@@ -69,7 +80,9 @@ convert_md <- function(metadata, input_file, output_file, clean, verbose) {
     remove_rmd_blocks()
 
   # Write the govspeak_file to "govspeak.txt" in the same directory as the output_file
-  govspeak_file_name <- paste0(tools::file_path_sans_ext(basename(output_file)), "_govspeak.txt")
+  # Convert the pub_date to "dd%b%Y" format
+  date_str <- format(as.Date(get("pub_date", envir = env_state), format = "%d/%m/%Y"), "%d%b%Y")
+  govspeak_file_name <- paste0(tools::file_path_sans_ext(basename(output_file)), "_", date_str, ".txt")
   writeLines(govspeak_file, file.path(dirname(output_file), govspeak_file_name))
 
   # we don't modify the html so just return it
@@ -89,7 +102,7 @@ convert_callouts <- function(md_file) {
 convert_image_tags <- function(input_string) {
   # Use gsub to find and replace all occurrences of markdown image tags
   gsub(
-    pattern = "!\\[\\]\\([^)]*\\/([^\\/]*?)\\.png\\)<!-- -->",
+    pattern = "!\\[\\]\\([^)]*\\/([^\\/]*?)\\.[^\\/]*?\\)<!-- -->",
     replacement = "[Image: \\1]",
     x = input_string,
     perl = TRUE
@@ -119,7 +132,6 @@ remove_rmd_blocks <- function(md_file) {
 # This function renames images by removing the "-number" suffix from the filename.
 # It then moves the file to the new filename and returns the new filename if the file exists.
 rename_images <- function(filename) {
-  print("rename_images called")
   # Convert the pub_date to "dd%b%Y" format
   date_str <- format(as.Date(get("pub_date", envir = env_state), format = "%d/%m/%Y"), "%d%b%Y")
 
@@ -131,7 +143,7 @@ rename_images <- function(filename) {
 
   # Construct the new file name by appending the date_str to the end of the file name
   new_filename_with_date <- paste0(tools::file_path_sans_ext(new_filename), "_", date_str, ".", ext)
-  print(new_filename_with_date)
+
   # Move the file to the new filename
   fs::file_move(path = filename, new_path = new_filename_with_date)
 
@@ -284,7 +296,8 @@ govspeak <- function(
     dpi = 72,
     pandoc_args = NULL,
     pub_date = NULL,
-    ...) {
+        ...) {
+          
   # Check that the pub_date argument has been provided
   if (is.null(pub_date)) {
     stop(
@@ -297,7 +310,7 @@ govspeak <- function(
 
   assign("pub_date", pub_date, envir = env_state)
   assign("format", "html", envir = env_state)
-  
+
   # dependencies
   extra_dependencies <- list(
     govspeak_dependency(),
@@ -311,7 +324,17 @@ govspeak <- function(
   template_file <- pkg_file("templates/template.html")
   govuk_lua <- pkg_file("templates/govspeak/govuk.lua")
   chart_filter <- pkg_file("templates/govspeak/chart_filter.lua")
-  pandoc_args <- c(pandoc_args, "--template", template_file, "--lua-filter", govuk_lua, "--lua-filter", chart_filter)
+  pandoc_args <- c(
+    pandoc_args, 
+    "--toc", 
+    "--template", 
+    template_file, 
+    "--lua-filter", 
+    govuk_lua, 
+    "--lua-filter", 
+    chart_filter, 
+    "--variable", 
+    paste0("date:", Sys.time()))
 
   # knitr options
   knitr_options <- rmarkdown::knitr_options_html(fig_width, fig_height, NULL, TRUE, dev = image_type)
@@ -325,10 +348,10 @@ govspeak <- function(
     post_processor = convert_md,
     base_format = rmarkdown::html_document_base(
       template_name = "govspeak",
-      template = pkg_file("templates/template.html"),
       template_dependencies = list(govspeak_dependency()),
       extra_dependencies = extra_dependencies,
-      pandoc_args = pandoc_args,
+      toc = TRUE,
+      toc_level = 3,
       ...
     )
   )

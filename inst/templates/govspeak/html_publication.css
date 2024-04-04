@@ -1,0 +1,108 @@
+.html-publication .publication-external {
+	margin-bottom: 20px;
+	position: relative
+}
+
+.direction-rtl .html-publication .publication-external {
+	direction: ltr
+}
+
+.html-publication .publication-header__last-changed {
+	font-family: "GDS Transport", arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-weight: 400;
+	font-size: 16px;
+	font-size: 1rem;
+	line-height: 1.25;
+	margin-top: 15px
+}
+
+@media print {
+	.html-publication .publication-header__last-changed {
+		font-family: sans-serif
+	}
+}
+
+@media(min-width: 40.0625em) {
+	.html-publication .publication-header__last-changed {
+		font-size: 19px;
+		font-size: 1.1875rem;
+		line-height: 1.3157894737
+	}
+}
+
+@media print {
+	.html-publication .publication-header__last-changed {
+		font-size: 14pt;
+		line-height: 1.15
+	}
+}
+
+@media(min-width: 48.0625em) {
+	.html-publication .contents-list-container {
+		position: sticky;
+		top: 10px;
+		max-height: 100vh;
+		overflow-y: auto;
+		margin-bottom: 20px
+	}
+}
+
+.direction-rtl .html-publication .contents-list-container {
+	float: right
+}
+
+.html-publication .main-content-container {
+	width: 100%;
+	padding: 0 15px;
+	box-sizing: border-box
+}
+
+@media(min-width: 48.0625em) {
+	.html-publication .main-content-container {
+		width: 75%;
+		float: right
+	}
+}
+
+.direction-rtl .html-publication .main-content-container {
+	float: left
+}
+
+.html-publication .offset-empty-contents-list {
+	float: right
+}
+
+.direction-rtl .html-publication .offset-empty-contents-list {
+	float: left
+}
+
+.html-publication .meta-data {
+	display: none
+}
+
+.html-publication .sticky-element .sticky-element__print-link {
+	margin-left: 15px
+}
+
+@media(max-width: 48.0525em) {
+	.html-publication .sticky-element--enabled {
+		position: static
+	}
+}
+
+@media print {
+	.html-publication .print-wrapper .meta-data--display-print {
+		page-break-before: always;
+		page-break-after: always;
+		display: block
+	}
+
+	.html-publication .print-wrapper .meta-data--display-print .meta-data-licence {
+		width: 78px;
+		height: auto;
+		margin-top: 60px;
+		margin-bottom: 40px
+	}
+}
