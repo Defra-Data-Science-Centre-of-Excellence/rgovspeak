@@ -12,7 +12,7 @@ assign("file_names", c(), envir = env_state)
 #'
 #' This function adds application.js as a dependency in an HTML document.
 #' @return A HTML dependency object for application.js
-application_js_dependency <- function(path) {
+application_js_dependency <- function() {
   htmltools::htmlDependency(
     name = "application.js",
     version = "1.0",
@@ -32,17 +32,18 @@ govspeak_dependency <- function() {
     version = "0.2",
     src = system.file("templates/govspeak", package = "rgovspeak2"),
     stylesheet = c(
-      "application.css", 
-      "application2.css", 
-      "html_publication.css", 
-      "organisation_logo.css", 
-      "inverse_header.css", 
+      "application.css",
+      "application2.css",
+      "html_publication.css",
+      "organisation_logo.css",
+      "inverse_header.css",
       "contents_list.css",
       "toc.css",
       "print_link.css",
       "govspeak_html_publication.css",
       "govspeak.css",
-      "back_to_top.css")
+      "back_to_top.css"
+    )
   )
 }
 
@@ -296,8 +297,8 @@ govspeak <- function(
     dpi = 72,
     pandoc_args = NULL,
     pub_date = NULL,
-        ...) {
-          
+    ...) {
+      
   # Check that the pub_date argument has been provided
   if (is.null(pub_date)) {
     stop(
@@ -325,16 +326,17 @@ govspeak <- function(
   govuk_lua <- pkg_file("templates/govspeak/govuk.lua")
   chart_filter <- pkg_file("templates/govspeak/chart_filter.lua")
   pandoc_args <- c(
-    pandoc_args, 
-    "--toc", 
-    "--template", 
-    template_file, 
-    "--lua-filter", 
-    govuk_lua, 
-    "--lua-filter", 
-    chart_filter, 
-    "--variable", 
-    paste0("date:", Sys.time()))
+    pandoc_args,
+    "--toc",
+    "--template",
+    template_file,
+    "--lua-filter",
+    govuk_lua,
+    "--lua-filter",
+    chart_filter,
+    "--variable",
+    paste0("date:", Sys.time())
+  )
 
   # knitr options
   knitr_options <- rmarkdown::knitr_options_html(fig_width, fig_height, NULL, TRUE, dev = image_type)
