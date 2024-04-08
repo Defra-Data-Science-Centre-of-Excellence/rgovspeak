@@ -56,135 +56,95 @@ pkg_file <- function(...) {
   system.file(..., package = "rgovspeak2", mustWork = TRUE)
 }
 
-#' Convert Markdown to a rendered file
-#'
-#' This function converts a Markdown file to a govspeak file using the specified metadata.
-#'
-#' @param metadata The metadata for the conversion process.
-#' @param input_file The path to the input Markdown file.
-#' @param output_file The path to save the rendered file.
-#' @param clean A logical value indicating whether to clean the output directory before rendering.
-#' @param verbose A logical value indicating whether to display verbose output during the conversion process.
-#'
-#' @return The path to the rendered file.
-convert_md <- function(metadata, input_file, output_file, clean, verbose) {
-  # output_file is the path to the rendered file. This is the only place we have access to that info.
-  # save it for later use
-  assign("file_path", dirname(output_file), envir = .GlobalEnv)
-
-  govspeak_file <- paste(readLines(input_file), collapse = "\n")
-
-  govspeak_file <- govspeak_file |>
-    remove_header() |>
-    convert_callouts() |>
-    convert_image_tags() |>
-    remove_rmd_blocks()
-
-  # Write the govspeak_file to "govspeak.txt" in the same directory as the output_file
-  # Convert the pub_date to "dd%b%Y" format
-  date_str <- format(as.Date(get("pub_date", envir = env_state), format = "%d/%m/%Y"), "%d%b%Y")
-  govspeak_file_name <- paste0(tools::file_path_sans_ext(basename(output_file)), "_", date_str, ".txt")
-  writeLines(govspeak_file, file.path(dirname(output_file), govspeak_file_name))
-
-  # we don't modify the html so just return it
-  output_file
-}
-
-#' Convert markdown callout syntax to govspeak
-#' @param md_file string; markdown file text
-#' @name convert_callouts
-#' @title Convert markdown callout syntax to govspeak
-convert_callouts <- function(md_file) {
-  # Lazy match on lines starting with ">", which are then flanked with "^"
-  # Currently only catches single line callouts
-  gsub("(\\n)>[ ]*(.*?\\n)", "\\1^\\2", md_file)
-}
-
-convert_image_tags <- function(input_string) {
-  # Use gsub to find and replace all occurrences of markdown image tags
-  gsub(
-    pattern = "!\\[\\]\\([^)]*\\/([^\\/]*?)\\.[^\\/]*?\\)<!-- -->",
-    replacement = "[Image: \\1]",
-    x = input_string,
-    perl = TRUE
-  )
-}
-
-#' Replace R markdown header with title only
-#' @param md_file string; markdown file text
-#' @name remove_header
-#' @title Replace R markdown header with ## title
-remove_header <- function(md_file) {
-  # Lazy match on header to extract title
-  # Remove substitution if titles must be entered manually
-  gsub("---\\n.*?---\\n", "", md_file)
-}
-
-#' Remove R markdown multiline block elements (package warnings, but also multiline code blocks)
-#' @param md_file string; markdown file text
-#' @name remove_rmd_blocks
-#' @title Remove R markdown multiline block elements (package warning and code block)
-remove_rmd_blocks <- function(md_file) {
-  # Lazy match on warnings and code blocks
-  gsub("```.*?```", "", md_file)
-}
-
-
-# This function renames images by removing the "-number" suffix from the filename.
-# It then moves the file to the new filename and returns the new filename if the file exists.
-rename_images <- function(filename) {
-  # Convert the pub_date to "dd%b%Y" format
-  date_str <- format(as.Date(get("pub_date", envir = env_state), format = "%d/%m/%Y"), "%d%b%Y")
-
-  # Remove the "-number" suffix from the filename
-  new_filename <- stringr::str_remove(string = filename, pattern = "-\\d+(?=\\.)")
-
-  # Get the file extension
-  ext <- tools::file_ext(filename)
-
-  # Construct the new file name by appending the date_str to the end of the file name
-  new_filename_with_date <- paste0(tools::file_path_sans_ext(new_filename), "_", date_str, ".", ext)
-
-  # Move the file to the new filename
-  fs::file_move(path = filename, new_path = new_filename_with_date)
-
-  # Return the new filename if the file exists, otherwise return the original filename
-  ifelse(fs::file_exists(new_filename_with_date), new_filename_with_date, filename)
-}
-
-move_image_files_to_extension_dirs <- function(file_path) {
-  # Check if a folder that ends with '_files' exists in file_path
-  dirs <- list.dirs(file_path, full.names = FALSE)
-  files_dir <- dirs[grepl("_files$", dirs)]
-
-  if (length(files_dir) == 0) {
-    return()
-  }
+check_for_figure_html_dir <- function(path) {
+  # Check if a folder that ends with '_files' exists in the provided path
+  files_dir <- dir(path, pattern = "_files$", full.names = TRUE)
 
   # Check if a 'figure_html' folder exists inside the '_files' folder
-  figure_html_dir <- list.dirs(file.path(file_path, files_dir), full.names = FALSE)
+  figure_html_dir <- list.dirs(files_dir, full.names = FALSE, recursive = FALSE)
 
-  if (!"figure-html" %in% figure_html_dir) {
-    return()
+  # Check if 'figure_html' directory is found
+  if ("figure-html" %in% figure_html_dir) {
+    TRUE
+  } else {
+    FALSE
   }
+}
 
-  # if there is already an images folder delete it, then rename and move
-  if (dir.exists(file.path(file_path, files_dir, "../images"))) {
-    fs::dir_delete(file.path(file_path, files_dir, "../images"))
-  }
+rename_images <- function(image_dir, date_str) {
+  files <- list.files(image_dir)
 
-  fs::file_move(file.path(file_path, files_dir, "figure-html"), file.path(file_path, files_dir, "../images"))
-  images_path <- file.path(file_path, "images")
-  files <- list.files(images_path, full.names = TRUE)
+  # Create a data frame to store the original and new filenames
+  filenames_df <- data.frame(Original = character(), New = character(), stringsAsFactors = FALSE)
 
   # Loop over each file
   for (file in files) {
-    print(paste0("moving ", file))
+    # Remove the "-number" suffix from the filename
+    new_filename <- stringr::str_remove(string = file, pattern = "-\\d+(?=\\.)")
+
+    # Get the file extension
+    ext <- tools::file_ext(file)
+
+    # Construct the new file name by appending the date_str to the end of the file name
+    new_filename_with_date <- paste0(tools::file_path_sans_ext(new_filename), "_", date_str, ".", ext)
+
+    # Move the file to the new filename
+    fs::file_move(path = fs::path(image_dir, file), new_path = fs::path(image_dir, new_filename_with_date))
+
+    # Add the original and new filenames to the data frame
+    filenames_df <- rbind(filenames_df, data.frame(Original = file, New = new_filename_with_date, stringsAsFactors = FALSE))
+  }
+
+  # Return the data frame
+  filenames_df
+}
+
+rename_data_files <- function(input_dir, date_str) {
+  files <- get("file_names", envir = env_state)
+
+  # Create a vector to store the new filenames
+  new_filenames <- c()
+
+  # Loop over each file
+  for (file in files) {
+    # Remove the "-number" suffix from the filename
+    new_filename <- stringr::str_remove(string = file, pattern = "-\\d+(?=\\.)")
+
+    # Get the file extension
+    ext <- tools::file_ext(file)
+
+    # Construct the new file name by appending the date_str to the end of the file name
+    new_filename_with_date <- paste0(tools::file_path_sans_ext(new_filename), "_", date_str, ".", ext)
+
+    # Move the file to the new filename
+    fs::file_move(path = fs::path(input_dir, file), new_path = fs::path(input_dir, new_filename_with_date))
+
+    # Add the new filename to the vector
+    new_filenames <- c(new_filenames, new_filename_with_date)
+  }
+
+  new_filenames
+}
+
+move_image_files_to_extension_dirs <- function(image_dir) {
+  # if there is already an images folder delete it, then rename and move
+  if (dir.exists(file.path("../../images"))) {
+    fs::dir_delete(file.path("../../images"))
+  }
+
+  new_image_dir <- file.path(image_dir, "../../images")
+  fs::dir_create(new_image_dir)
+
+  files <- list.files(image_dir, full.names = TRUE)
+
+  # Loop over each file
+  for (file in files) {
+    print(paste0("moving ", basename(file)))
     # Get the file extension
     ext <- tools::file_ext(file)
 
     # Create a new directory for this extension if it doesn't exist
-    new_dir <- file.path(images_path, ext)
+    new_dir <- file.path(new_image_dir, ext)
     if (!dir.exists(new_dir)) {
       dir.create(new_dir)
     }
@@ -194,26 +154,23 @@ move_image_files_to_extension_dirs <- function(file_path) {
   }
 
   # Check if files_dir is empty
-  if (length(list.files(file.path(file_path, files_dir))) == 0) {
+  if (length(list.files(file.path(image_dir))) == 0) {
     # If it is, delete it
-    fs::dir_delete(file.path(file_path, files_dir))
+    fs::dir_delete(file.path(image_dir))
   }
 }
 
-move_data_files_to_extension_dirs <- function(file_path) {
-  date_str <- format(as.Date(get("pub_date", envir = env_state), format = "%d/%m/%Y"), "%d%b%Y")
-  file_names <- get("file_names", envir = env_state)
-
+move_data_files_to_extension_dirs <- function(file_names, output_dir) {
   # If no files were saved using save_data() then return
   if (length(file_names) == 0) {
     return()
   }
 
-  # Define the file extensions that should sub folders
+  # Define the file extensions that should create sub folders
   extensions <- c("xls", "xlsx", "csv", "ods")
 
   # Create subfolders for each extension and move matching files
-  datasets_folder <- fs::path(file_path, "datasets")
+  datasets_folder <- fs::path(output_dir, "datasets")
   moved_files <- vector("character", length = 0) # List to store moved files
 
   for (extension in extensions) {
@@ -235,13 +192,9 @@ move_data_files_to_extension_dirs <- function(file_path) {
       for (file in extension_files) {
         if (fs::file_exists(file)) {
           print(paste0("moving ", file))
-          ext <- tools::file_ext(file)
-
-          # Construct the new file name by appending the date_str to the end of the file name
-          file_name <- paste0(tools::file_path_sans_ext(file), "_", date_str, ".", ext)
 
           # Move the file to the new directory
-          file.rename(file, file.path(extension_folder, basename(file_name)))
+          file.rename(file, fs::path(extension_folder, file))
 
           moved_files <- c(moved_files, file) # Add moved file to the list
         }
@@ -249,21 +202,15 @@ move_data_files_to_extension_dirs <- function(file_path) {
     }
   }
 
-  # Check if the files exist before deleting
-  for (file in moved_files) {
-    if (fs::file_exists(file)) {
-      fs::file_delete(file)
+  # check if all the files were moved, if not move the rest into output_dir
+  if (length(moved_files) < length(file_names)) {
+    for (file in file_names) {
+      if (!file %in% moved_files) {
+        print(paste0("moving ", file))
+        file.rename(file, fs::path(output_dir, file))
+      }
     }
   }
-}
-
-clean_up <- function() {
-  on.exit(print("Cleaning up"), add = TRUE)
-  if (exists("file_path")) {
-    on.exit(move_image_files_to_extension_dirs(file_path), add = TRUE)
-    on.exit(move_data_files_to_extension_dirs(file_path), add = TRUE)
-  }
-  assign("format", NULL, envir = env_state)
 }
 
 # Use the output_format variable in the save_data function
@@ -287,6 +234,124 @@ save_data <- function(save_func, args_list) {
   }
 }
 
+post_processor <- function(metadata, input_file, output_file, clean, verbose, ...) {
+  # sort the publishing date out
+  if (!is.null(metadata$publish_date)) {
+    date_str <- format(as.Date(metadata$publish_date), "%d%b%Y")
+  } else {
+    date_str <- format(Sys.Date(), "%d%b%Y")
+  }
+
+  output_dir <- dirname(output_file)
+
+  # Handle any image files
+  renamed_images <- NULL
+
+  if (check_for_figure_html_dir(output_dir)) {
+    image_dir <- file.path(output_dir, sub(".knit.md", "_files", input_file), "figure-html")
+    renamed_images <- rename_images(image_dir, date_str)
+    move_image_files_to_extension_dirs(image_dir)
+  }
+
+  # Handle any data files
+  renames <- rename_data_files(fs::path(output_dir, "../"), date_str)
+  move_data_files_to_extension_dirs(renames, output_dir)
+
+  # Handle the markdown file
+  govspeak_file <- convert_md(input_file, output_file, renamed_images)
+
+  # Write the govspeak_file to "govspeak.txt" in the same directory as the output_file
+  # Convert the pub_date to "dd%b%Y" format
+  govspeak_file_name <- paste0(tools::file_path_sans_ext(basename(output_file)), "_", date_str, ".txt")
+  writeLines(govspeak_file, file.path(dirname(output_file), govspeak_file_name))
+
+  output_file
+}
+
+#' Convert Markdown to a rendered file
+#'
+#' This function converts a Markdown file to a govspeak file using the specified metadata.
+#'
+#' @param metadata The metadata for the conversion process.
+#' @param input_file The path to the input Markdown file.
+#' @param output_file The path to save the rendered file.
+#' @param clean A logical value indicating whether to clean the output directory before rendering.
+#' @param verbose A logical value indicating whether to display verbose output during the conversion process.
+#'
+#' @return The path to the rendered file.
+convert_md <- function(input_file, output_file, renamed_images) {
+  govspeak_file <- paste(readLines(input_file), collapse = "\n")
+
+  govspeak_file <- govspeak_file |>
+    remove_header() |>
+    convert_callouts() |>
+    remove_rmd_blocks()
+
+  if (!is.null(renamed_images)) {
+    govspeak_file <- convert_image_tags(govspeak_file, renamed_images)
+  }
+
+  govspeak_file
+}
+
+#' Convert markdown callout syntax to govspeak
+#' @param md_file string; markdown file text
+#' @name convert_callouts
+#' @title Convert markdown callout syntax to govspeak
+convert_callouts <- function(md_file) {
+  # Lazy match on lines starting with ">", which are then flanked with "^"
+  # Currently only catches single line callouts
+  gsub("(\\n)>[ ]*(.*?\\n)", "\\1^\\2", md_file)
+}
+
+convert_image_tags <- function(input_string, renamed_images) {
+  # Loop over each row in renamed_images
+  for (i in seq_len(nrow(renamed_images))) {
+    # Get the original and new filenames
+    original <- renamed_images$Original[i]
+    new <- renamed_images$New[i]
+
+    # Create the pattern and replacement strings
+    # The pattern now matches any characters (non-greedy) before and including the original filename
+    pattern <- paste0("!\\[\\]\\([^)]*", original, "\\)<!-- -->")
+    replacement <- paste0("[Image: ", new, "]")
+
+    # Use gsub to find and replace all occurrences of the original filename
+    input_string <- gsub(
+      pattern = pattern,
+      replacement = replacement,
+      x = input_string,
+      perl = TRUE
+    )
+  }
+
+  # Return the modified string
+  input_string
+}
+
+#' Replace R markdown header with title only
+#' @param md_file string; markdown file text
+#' @name remove_header
+#' @title Replace R markdown header with ## title
+remove_header <- function(md_file) {
+  # Lazy match on header to extract title
+  # Remove substitution if titles must be entered manually
+  gsub("---\\n.*?---\\n", "", md_file)
+}
+
+#' Remove R markdown multiline block elements (package warnings, but also multiline code blocks)
+#' @param md_file string; markdown file text
+#' @name remove_rmd_blocks
+#' @title Remove R markdown multiline block elements (package warning and code block)
+remove_rmd_blocks <- function(md_file) {
+  # Lazy match on warnings and code blocks
+  gsub("```.*?```", "", md_file)
+}
+
+clean_up <- function(input_file) {
+  assign("file_names", c(), envir = env_state)
+  assign("format", NULL, envir = env_state)
+}
 
 # This function converts GovSpeak markup language to HTML.
 #' @export
@@ -296,22 +361,9 @@ govspeak <- function(
     fig_height = 640 / 72,
     dpi = 72,
     pandoc_args = NULL,
-    pub_date = NULL,
     ...) {
-      
-  # Check that the pub_date argument has been provided
-  if (is.null(pub_date)) {
-    stop(
-      paste0(
-        "The 'pub_date' argument has not been provided. Please provide it in the YAML header like this:\n\n",
-        "output:\n  rgovspeak2::govspeak:\n    pub_date: \"1/2/2024\""
-      )
-    )
-  }
-
-  assign("pub_date", pub_date, envir = env_state)
   assign("format", "html", envir = env_state)
-
+  # print(mget(ls(envir = env_state), envir = env_state))
   # dependencies
   extra_dependencies <- list(
     govspeak_dependency(),
@@ -340,14 +392,13 @@ govspeak <- function(
 
   # knitr options
   knitr_options <- rmarkdown::knitr_options_html(fig_width, fig_height, NULL, TRUE, dev = image_type)
-  knitr_options$opts_chunk <- append(knitr_options$opts_chunk, knitr::opts_chunk$set(fig.process = rename_images))
 
   rmarkdown::output_format(
     knitr = knitr_options,
     pandoc = rmarkdown::pandoc_options(to = "html", args = pandoc_args),
-    keep_md = TRUE,
+    keep_md = FALSE,
     on_exit = clean_up,
-    post_processor = convert_md,
+    post_processor = post_processor,
     base_format = rmarkdown::html_document_base(
       template_name = "govspeak",
       template_dependencies = list(govspeak_dependency()),

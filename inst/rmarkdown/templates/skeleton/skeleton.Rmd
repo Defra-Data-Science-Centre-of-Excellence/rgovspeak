@@ -1,7 +1,9 @@
 ---
 title: rgovspeak guide
 author: Mark Kirby
-output: rgovspeak2::govspeak
+output: 
+  rgovspeak2::govspeak:
+    image_type: ['png', 'jpeg', 'pdf', 'svg', 'tiff']
 ---
 
 ```{r setup, include=FALSE}
@@ -429,7 +431,7 @@ Farm Business Survey (FBS) style. This package was built with and designed to wo
 with ggplot2 and provides a set of templates to create basic chart whilst also allowing a deep level
 of customisation.
 
-```{r rgovspeak-guide-figure-2-25oct2023, echo = FALSE}
+```{r rgovspeak-guide-figure-2, echo = FALSE}
 if (requireNamespace("ggfbs", quietly = TRUE)) {
   # Load libraries
   library(dplyr)
