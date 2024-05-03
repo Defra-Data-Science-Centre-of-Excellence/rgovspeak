@@ -4,7 +4,7 @@
 \alias{application_js_dependency}
 \title{Function to add application.js as a dependency}
 \usage{
-application_js_dependency(path)
+application_js_dependency()
 }
 \value{
 A HTML dependency object for application.js

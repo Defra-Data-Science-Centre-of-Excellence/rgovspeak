@@ -4,12 +4,12 @@
 \alias{convert_md}
 \title{Convert Markdown to a rendered file}
 \usage{
-convert_md(metadata, input_file, output_file, clean, verbose)
+convert_md(input_file, renamed_images)
 }
 \arguments{
-\item{metadata}{The metadata for the conversion process.}
-
 \item{input_file}{The path to the input Markdown file.}
+
+\item{metadata}{The metadata for the conversion process.}
 
 \item{output_file}{The path to save the rendered file.}
 
