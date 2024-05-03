@@ -8,4 +8,14 @@
 
   showtext::showtext_auto()
   invisible(NULL)
+
+  # Define state environment
+  env_state <- rlang::new_environment(parent = rlang::empty_env())
+  
+  # Assign env_state to the package environment
+  assign("env_state", env_state, envir = parent.env(environment()))
+  
+  # Initialise variables
+  assign("file_names", c(), envir = env_state)
 }
+

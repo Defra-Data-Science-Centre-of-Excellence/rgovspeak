@@ -1,12 +1,12 @@
-# Initialization -----------------------------------------------------------
+#' @export
+set_publication_date <- function(date) {
+  assign("publication_date", date, envir = env_state)
+}
 
-# Define package environment
-env_state <- rlang::new_environment(parent = rlang::empty_env())
-
-# Initialize file_names variable
-assign("file_names", c(), envir = env_state)
-
-# Function Definitions -----------------------------------------------------
+#' @export
+get_publication_date <- function() {
+  get("publication_date", envir = env_state)
+}
 
 #' Function to add application.js as a dependency
 #'
@@ -83,47 +83,23 @@ rename_images <- function(image_dir, date_str) {
     new_filename <- stringr::str_remove(string = file, pattern = "-\\d+(?=\\.)")
 
     # Get the file extension
-    ext <- tools::file_ext(file)
+    ext <- fs::path_ext(file)
 
     # Construct the new file name by appending the date_str to the end of the file name
-    new_filename_with_date <- paste0(tools::file_path_sans_ext(new_filename), "_", date_str, ".", ext)
+    new_filename_with_date <- paste0(fs::path_ext_remove(new_filename), "_", date_str, ".", ext)
 
     # Move the file to the new filename
     fs::file_move(path = fs::path(image_dir, file), new_path = fs::path(image_dir, new_filename_with_date))
 
     # Add the original and new filenames to the data frame
-    filenames_df <- rbind(filenames_df, data.frame(Original = file, New = new_filename_with_date, stringsAsFactors = FALSE))
+    filenames_df <- rbind(
+      filenames_df,
+      data.frame(Original = file, New = new_filename_with_date, stringsAsFactors = FALSE)
+    )
   }
 
   # Return the data frame
   filenames_df
-}
-
-rename_data_files <- function(input_dir, date_str) {
-  files <- get("file_names", envir = env_state)
-
-  # Create a vector to store the new filenames
-  new_filenames <- c()
-
-  # Loop over each file
-  for (file in files) {
-    # Remove the "-number" suffix from the filename
-    new_filename <- stringr::str_remove(string = file, pattern = "-\\d+(?=\\.)")
-
-    # Get the file extension
-    ext <- tools::file_ext(file)
-
-    # Construct the new file name by appending the date_str to the end of the file name
-    new_filename_with_date <- paste0(tools::file_path_sans_ext(new_filename), "_", date_str, ".", ext)
-
-    # Move the file to the new filename
-    fs::file_move(path = fs::path(input_dir, file), new_path = fs::path(input_dir, new_filename_with_date))
-
-    # Add the new filename to the vector
-    new_filenames <- c(new_filenames, new_filename_with_date)
-  }
-
-  new_filenames
 }
 
 move_image_files_to_extension_dirs <- function(image_dir) {
@@ -139,9 +115,8 @@ move_image_files_to_extension_dirs <- function(image_dir) {
 
   # Loop over each file
   for (file in files) {
-    print(paste0("moving ", basename(file)))
     # Get the file extension
-    ext <- tools::file_ext(file)
+    ext <- fs::path_ext(file)
 
     # Create a new directory for this extension if it doesn't exist
     new_dir <- file.path(new_image_dir, ext)
@@ -160,7 +135,7 @@ move_image_files_to_extension_dirs <- function(image_dir) {
   }
 }
 
-move_data_files_to_extension_dirs <- function(file_names, output_dir) {
+move_data_files_to_extension_dirs <- function(file_names, output_dir, date_str) {
   # If no files were saved using save_data() then return
   if (length(file_names) == 0) {
     return()
@@ -169,74 +144,77 @@ move_data_files_to_extension_dirs <- function(file_names, output_dir) {
   # Define the file extensions that should create sub folders
   extensions <- c("xls", "xlsx", "csv", "ods")
 
-  # Create subfolders for each extension and move matching files
-  datasets_folder <- fs::path(output_dir, "datasets")
+  # Create the data folder if it doesn't exist
+  data_folder <- fs::path(output_dir, "data")
+  if (!fs::dir_exists(data_folder)) {
+    fs::dir_create(data_folder)
+  }
+
+  # Move all files to the data folder
   moved_files <- vector("character", length = 0) # List to store moved files
+  for (file in file_names) {
+    if (fs::file_exists(file)) {
+      # Move the file to the data folder
+      fs::file_move(file, fs::path(data_folder, fs::path_file(file)))
 
-  for (extension in extensions) {
-    extension_files <- file_names[tools::file_ext(file_names) == extension]
+      moved_files <- c(moved_files, fs::path(data_folder, fs::path_file(file))) # Add moved file to the list
+    }
+  }
 
-    if (length(extension_files) > 0) {
-      # Check if the datasets folder exists, if not create it
-      if (!fs::dir_exists(datasets_folder)) {
-        fs::dir_create(datasets_folder)
-      }
+  # Rename the files and move them to subfolders based on their extensions
+  for (file in moved_files) {
+    # Remove the "-number" suffix from the filename
+    new_filename <- stringr::str_remove(string = fs::path_file(file), pattern = "-\\d+(?=\\.)")
 
+    # Get the file extension
+    ext <- fs::path_ext(file)
+
+    # Construct the new file name by appending the date_str to the end of the file name
+    new_filename_with_date <- paste0(fs::path_ext_remove(new_filename), "_", date_str, ".", ext)
+
+    # If the file extension is in the extensions vector, move it to a subfolder
+    if (ext %in% extensions) {
       # Create a new directory for this extension if it doesn't exist
-      extension_folder <- fs::path(datasets_folder, extension)
+      extension_folder <- fs::path(data_folder, ext)
       if (!fs::dir_exists(extension_folder)) {
         fs::dir_create(extension_folder)
       }
 
-      # Move the files to the new directory if they exist
-      for (file in extension_files) {
-        if (fs::file_exists(file)) {
-          print(paste0("moving ", file))
-
-          # Move the file to the new directory
-          file.rename(file, fs::path(extension_folder, file))
-
-          moved_files <- c(moved_files, file) # Add moved file to the list
-        }
-      }
-    }
-  }
-
-  # check if all the files were moved, if not move the rest into output_dir
-  if (length(moved_files) < length(file_names)) {
-    for (file in file_names) {
-      if (!file %in% moved_files) {
-        print(paste0("moving ", file))
-        file.rename(file, fs::path(output_dir, file))
-      }
+      # Move the file to the new directory and rename it
+      fs::file_move(file, fs::path(extension_folder, new_filename_with_date))
+    } else {
+      # If the file extension is not in the extensions vector, just rename it
+      fs::file_move(file, fs::path(data_folder, new_filename_with_date))
     }
   }
 }
 
-# Use the output_format variable in the save_data function
 #' @export
 save_data <- function(save_func, args_list) {
-  if (!is.null(get("format", envir = env_state)) && get("format", envir = env_state) == "html") {
-    # Detect the file name from args_list
-    file_name <- NULL
-    for (arg in args_list) {
-      if (is.character(arg) && length(arg) == 1 && grepl("\\.\\w+$", arg)) {
-        file_name <- arg
-        break
-      }
+  # Detect the file name from args_list
+  file_name <- NULL
+  for (arg in args_list) {
+    if (is.character(arg) && length(arg) == 1 && grepl("\\.\\w+$", arg)) {
+      file_name <- arg
+      break
     }
-
-    if (!is.null(file_name)) {
-      # Add the file name to the global list
-      assign("file_names", c(get("file_names", envir = env_state), file_name), envir = env_state)
-    }
-    do.call(save_func, args_list)
   }
+
+  output_format <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+
+  if (!is.null(file_name) && (is.null(output_format) || output_format == "html")) {
+    # Add the file name to the global list
+    env_state$file_names <- c(env_state$file_names, file_name)
+  }
+
+  do.call(save_func, args_list)
 }
 
 post_processor <- function(metadata, input_file, output_file, clean, verbose, ...) {
-  # sort the publishing date out
-  if (!is.null(metadata$publish_date)) {
+  # Sort out the publication date
+  if (exists("publication_date", envir = env_state)) {
+    date_str <- format(get("publication_date", envir = env_state), "%d%b%Y")
+  } else if (!is.null(metadata$publish_date)) {
     date_str <- format(as.Date(metadata$publish_date), "%d%b%Y")
   } else {
     date_str <- format(Sys.Date(), "%d%b%Y")
@@ -254,15 +232,15 @@ post_processor <- function(metadata, input_file, output_file, clean, verbose, ..
   }
 
   # Handle any data files
-  renames <- rename_data_files(fs::path(output_dir, "../"), date_str)
-  move_data_files_to_extension_dirs(renames, output_dir)
+  move_data_files_to_extension_dirs(env_state$file_names, output_dir, date_str)
+
+  env_state$file_names <- NULL
 
   # Handle the markdown file
-  govspeak_file <- convert_md(input_file, output_file, renamed_images)
+  govspeak_file <- convert_md(input_file, renamed_images)
 
   # Write the govspeak_file to "govspeak.txt" in the same directory as the output_file
-  # Convert the pub_date to "dd%b%Y" format
-  govspeak_file_name <- paste0(tools::file_path_sans_ext(basename(output_file)), "_", date_str, ".txt")
+  govspeak_file_name <- paste0(fs::path_ext_remove(basename(output_file)), "_", date_str, ".txt")
   writeLines(govspeak_file, file.path(dirname(output_file), govspeak_file_name))
 
   output_file
@@ -279,7 +257,7 @@ post_processor <- function(metadata, input_file, output_file, clean, verbose, ..
 #' @param verbose A logical value indicating whether to display verbose output during the conversion process.
 #'
 #' @return The path to the rendered file.
-convert_md <- function(input_file, output_file, renamed_images) {
+convert_md <- function(input_file, renamed_images) {
   govspeak_file <- paste(readLines(input_file), collapse = "\n")
 
   govspeak_file <- govspeak_file |>
@@ -361,9 +339,8 @@ govspeak <- function(
     fig_height = 640 / 72,
     dpi = 72,
     pandoc_args = NULL,
+    keep_md = FALSE,
     ...) {
-  assign("format", "html", envir = env_state)
-  # print(mget(ls(envir = env_state), envir = env_state))
   # dependencies
   extra_dependencies <- list(
     govspeak_dependency(),
@@ -396,7 +373,7 @@ govspeak <- function(
   rmarkdown::output_format(
     knitr = knitr_options,
     pandoc = rmarkdown::pandoc_options(to = "html", args = pandoc_args),
-    keep_md = FALSE,
+    keep_md = keep_md,
     on_exit = clean_up,
     post_processor = post_processor,
     base_format = rmarkdown::html_document_base(
