@@ -16,7 +16,7 @@ application_js_dependency <- function() {
   htmltools::htmlDependency(
     name = "application.js",
     version = "1.0",
-    src = system.file("templates/govspeak", package = "rgovspeak2"),
+    src = system.file("templates/govspeak", package = "rgovspeak"),
     script = "application.js"
   )
 }
@@ -30,7 +30,7 @@ govspeak_dependency <- function() {
   htmltools::htmlDependency(
     name = "govspeak",
     version = "0.2",
-    src = system.file("templates/govspeak", package = "rgovspeak2"),
+    src = system.file("templates/govspeak", package = "rgovspeak"),
     stylesheet = c(
       "application.css",
       "application2.css",
@@ -53,7 +53,7 @@ govspeak_dependency <- function() {
 #' @param ... additional path components to the resource file
 #' @return the file path of the resource file
 pkg_file <- function(...) {
-  system.file(..., package = "rgovspeak2", mustWork = TRUE)
+  system.file(..., package = "rgovspeak", mustWork = TRUE)
 }
 
 check_for_figure_html_dir <- function(path) {

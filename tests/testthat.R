@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(rgovspeak2)
+library(rgovspeak)
 
-test_check("rgovspeak2")
+test_check("rgovspeak")
