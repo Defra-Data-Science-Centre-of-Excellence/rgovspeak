@@ -51,15 +51,12 @@ end
 
 -- Function to estimate if the text will fit in the bar
 local function will_text_fit(text, bar_width)
-  -- Estimate character width (this is a heuristic and may need adjustment)
-  local avg_char_width = 2.55 -- Average character width in pixels
-  
   -- Calculate the estimated text width
-  local text_width = #text * avg_char_width
+  local characters = #text * 2.55
   
   -- Determine if the text fits within the bar width
-  local fits = text_width <= bar_width
-  
+  local fits = characters <= bar_width
+
   return fits
 end
 
@@ -138,7 +135,7 @@ function generate_table(table)
   html = html .. '  <thead>\n    <tr>\n'
   for i, cell in pairs(table.headers) do
     -- Add the table header cells with appropriate classes
-    html = html .. '      <th scope="col" class="cell-text-' .. (i == 1 and 'left' or 'right') .. '">' .. pandoc.utils.stringify(cell) .. '</th>\n'
+    html = html .. '      <th scope="col" class="cell-text-' .. (i == 1 and 'left' or 'right') .. '">' .. stringify_with_formatting(cell) .. '</th>\n'
   end
   html = html .. '    </tr>\n  </thead>\n'
 
@@ -148,7 +145,7 @@ function generate_table(table)
     html = html .. '    <tr>\n'
     for i, cell in pairs(row) do
       -- Add the table cells with appropriate classes
-      html = html .. '      <td class="cell-text-' .. (i == 1 and 'left' or 'right') .. '">' .. pandoc.utils.stringify(cell) .. '</td>\n'
+      html = html .. '      <td class="cell-text-' .. (i == 1 and 'left' or 'right') .. '">' .. stringify_with_formatting(cell) .. '</td>\n'
     end
     html = html .. '    </tr>\n'
   end
@@ -323,7 +320,7 @@ function generate_chart_body(table, isNegative, isStacked)
       if j == #row and isStacked then
         body = body .. generate_total_div(cell_value)
       else
-        body = body .. generate_cell_div(value, cell_value, barClass, width, isStacked, isNegative)
+        body = body .. generate_cell_div(value, cell_value, barClass, width, range, isStacked, isNegative)
       end
     end
 
@@ -343,6 +340,7 @@ end
 -- Returns:
 --   - html: The generated HTML code for the chart.
 function generate_chart_html(table, options)
+
   -- 1. Check our options
   local isNegative = exists(options, 'negative')
   local isStacked = exists(options, 'stacked')
