@@ -5,6 +5,53 @@ chart_id = 0
 
 -- Utility Functions
 
+-- Extract numeric value from text
+local function extract_numeric(text)
+  -- Debug output: original text
+  print("Original text:", text)
+  
+  -- Use pattern to extract numeric part, allowing for commas as thousands separators
+  local numeric_part = text:match("[-]?%d+[,%d]*%.?%d*")
+  
+  -- Debug output: extracted numeric part
+  print("Extracted numeric part:", numeric_part)
+  
+  if numeric_part then
+    -- Remove commas for proper conversion
+    numeric_part = numeric_part:gsub(",", "")
+  end
+  
+  -- Convert to number and return 0 if conversion fails
+  local number = tonumber(numeric_part) or 0
+  
+  -- Debug output: converted number
+  print("Converted number:", number)
+  
+  return number
+end
+
+-- Function to estimate if the text will fit in the bar
+local function will_text_fit(text, bar_width)
+  -- Estimate character width (this is a heuristic and may need adjustment)
+  local avg_char_width = 2.55 -- Average character width in pixels
+  
+  -- Calculate the estimated text width
+  local text_width = #text * avg_char_width
+  
+  -- Debug output: text, bar width, and estimated text width
+  print("Text:", text)
+  print("Bar width:", bar_width)
+  print("Estimated text width:", text_width)
+  
+  -- Determine if the text fits within the bar width
+  local fits = text_width <= bar_width
+  
+  -- Debug output: does the text fit
+  print("Does the text fit:", fits)
+  
+  return fits
+end
+
 --- Calculates the total of a given row.
 -- @param row The row containing the cells to be summed.
 -- @return The total sum of the cells in the row.
@@ -24,25 +71,52 @@ function find_max_value(table)
     for j, cell in ipairs(row) do
       -- Ignore the first column
       if j ~= 1 then
-        local value = tonumber(pandoc.utils.stringify(cell))
+        local cell_value = pandoc.utils.stringify(cell)
+        local value = extract_numeric(cell_value)
+        
+        -- Debug output
+        print(string.format("Row %d, Column %d", i, j))
+        print("Cell value:", cell_value)
+        print("Numeric value:", value)
+        
         if value and value > max_value then
           max_value = value
         end
       end
     end
   end
+  
+  -- Debug output
+  print("Max value:", max_value)
+  
   return max_value
 end
 
--- Function: calculate_min_max_values
+-- Function: calculate_range
 -- Description: Calculates the minimum and maximum values from the active_table rows.
 -- Returns: The minimum and maximum values as a tuple.
 function calculate_range(rows)
   local min_value, max_value = math.huge, -math.huge
   for _, row in ipairs(rows) do
-    local change = tonumber(pandoc.utils.stringify(row[2]))
-    min_value, max_value = math.min(min_value, change), math.max(max_value, change)
+    local cell_value = pandoc.utils.stringify(row[2])
+    local change = extract_numeric(cell_value)
+    
+    -- Debug output
+    print("Row:", row)
+    print("Cell value:", cell_value)
+    print("Numeric value:", change)
+    
+    if change then
+      min_value, max_value = math.min(min_value, change), math.max(max_value, change)
+    else
+      print("Warning: Could not convert cell value to number:", cell_value)
+    end
   end
+  
+  -- Debug output
+  print("Min value:", min_value)
+  print("Max value:", max_value)
+  
   return max_value - min_value
 end
 
@@ -132,11 +206,29 @@ function generate_chart_legend(table)
   -- Loop over the remaining headers, if our header == Total then stop and create the total div
   for i, header in ipairs(table.header or {}) do
     local headerContent = pandoc.utils.stringify(header)
+    
+    -- Debug output: original header content
+    print("Original header content:", headerContent)
+    
+    -- Check if the header content has markdown bold
+    local isBold = headerContent:match("^%*%*(.-)%*%*$")
+    if isBold then
+      print("Bold content found:", isBold)
+      headerContent = "<strong>" .. isBold .. "</strong>"
+    else
+      print("No bold content found")
+    end
+    
+    -- Debug output: processed header content
+    print("Processed header content:", headerContent)
+    
     if i == 1 then
       -- Add the header div for the first column
       legend = legend .. '        <div class="mc-th">' .. headerContent .. '</div>\n'
     elseif i < #table.header or 0 then
-      if headerContent == 'Total' then
+      -- Modify the total check to work if surrounded by **
+      local isTotal = headerContent:match("^<strong>Total</strong>$") or headerContent == "Total"
+      if isTotal then
         -- Add the total div with special styling
         legend = legend .. '        <div class="mc-th mc-stacked-header mc-header-total">Total</div>\n'
       else
@@ -153,6 +245,8 @@ function generate_chart_legend(table)
   return legend
 end
 
+
+
 -- Helper function to generate a div for a cell
 -- Function: generate_cell_div
 -- Description: Generates a cell div element for a chart filter.
@@ -164,29 +258,35 @@ end
 --   - isNegative: A boolean indicating whether the value is negative.
 -- Returns:
 --   - The generated cell div element as a string.
-function generate_cell_div(value, barClass, width, isStacked, isNegative)
+function generate_cell_div(value, text, barClass, width, isStacked, isNegative)
   local margin_left, dent = 0, "mc-bar-indented"
   local span_style = ""
+  local overflow_class = ""
 
-  if isNegative then
-    margin_left = value >= 0 and 65 or (65 - width)
-    if margin_left >= 0 and width < 7 then
+  margin_left = value >= 0 and 65 or (65 - width)
+  
+  if not will_text_fit(text, width) then
+    if isStacked then
+      -- Use mc-value-overflow for stacked charts where the text does not fit
+      overflow_class = "mc-value-overflow"
+    else
+      -- Use mc-bar-outdented for any other chart where the text does not fit
       dent = "mc-bar-outdented"
       span_style = ' style="margin-left: 100%; display: inline-block;"'
-    elseif margin_left < 0 then
-      margin_left = 0
-      width = 65
     end
+  elseif margin_left < 0 then
+    margin_left = 0
+    width = 65
   end
 
-  local style = 'style="width: ' .. width .. '%;' -- Set the width style for the bar cell
+  local style = 'style="width: ' .. width .. '%;"' -- Set the width style for the bar cell
   if isNegative then
-    style = 'style="margin-left: ' .. margin_left .. '%; width: ' .. width .. '%;' -- Adjust the style for negative values
+    style = 'style="margin-left: ' .. margin_left .. '%; width: ' .. width .. '%;"' -- Adjust the style for negative values
   end
 
   local indent = isStacked and '' or ' mc-bar-indented' -- Add indentation class if the chart is stacked
-  return '      <div class="mc-td mc-bar-cell ' .. barClass .. ' ' .. dent .. indent .. '" ' .. style .. '">\n' ..
-      '        <span' .. span_style .. '>' .. value .. '</span>\n      </div>\n' -- Generate the cell div element
+  return '      <div class="mc-td mc-bar-cell ' .. barClass .. ' ' .. dent .. indent .. ' ' .. overflow_class .. '" ' .. style .. '">\n' ..
+      '        <span' .. span_style .. '>' .. text .. '</span>\n      </div>\n' -- Generate the cell div element
 end
 
 
@@ -212,6 +312,9 @@ function generate_chart_body(table, isNegative, isStacked)
   -- Calculate the range of values in the table
   local range = calculate_range(table.rows)
   
+  -- Debug output: range of values
+  print("Range of values:", range)
+  
   -- Initialize the chart body
   local body = '  <div class="mc-tbody">\n'
 
@@ -221,10 +324,19 @@ function generate_chart_body(table, isNegative, isStacked)
     body = body .. '    <div class="mc-tr">\n      <div class="mc-td mc-key-cell">' ..
         pandoc.utils.stringify(row[1]) .. '</div>\n'
 
+    -- Debug output: row key cell
+    print(string.format("Row %d key cell:", i), pandoc.utils.stringify(row[1]))
+
     -- Iterate over each value in the row
     for j = 2, #row do
-      local value = tonumber(pandoc.utils.stringify(row[j]))
+      local cell_value = pandoc.utils.stringify(row[j])
+      local value = extract_numeric(cell_value)
       local width, barClass, margin_left
+
+      -- Debug output: cell value and numeric value
+      print(string.format("Row %d, Column %d", i, j))
+      print("Cell value:", cell_value)
+      print("Numeric value:", value)
 
       -- Determine the width and class of the bar based on the value and options
       barClass = 'mc-bar-' .. (j - 1)
@@ -234,15 +346,23 @@ function generate_chart_body(table, isNegative, isStacked)
         local bar_direction = value < 0 and " mc-bar-negative" or " mc-bar-positive"
         barClass = barClass .. bar_direction
       else
-        width = value / find_max_value(table) * 65
+        -- Debug output: calling find_max_value
+        print("Calling find_max_value: generate_chart_body")
+        local max_value = find_max_value(table)
+        print("Max value:", max_value)
+        width = value / max_value * 65
         -- width = math.log(value + 1) / math.log(find_max_value(table) + 1) * 60
       end
 
+      -- Debug output: bar class and width
+      print("Bar class:", barClass)
+      print("Bar width:", width)
+
       -- Generate the appropriate div based on the options
       if j == #row and isStacked then
-        body = body .. generate_total_div(value)
+        body = body .. generate_total_div(cell_value)
       else
-        body = body .. generate_cell_div(value, barClass, width, isStacked, isNegative)
+        body = body .. generate_cell_div(value, cell_value, barClass, width, isStacked, isNegative)
       end
     end
 
