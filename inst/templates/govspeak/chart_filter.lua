@@ -5,6 +5,34 @@ chart_id = 0
 
 -- Utility Functions
 
+-- Function to convert elements to a string with formatting
+function stringify_with_formatting(elements)
+  local result = ""
+
+  local function process_elements(elements)
+    for _, element in ipairs(elements) do
+      if element.t then
+        if element.t == "Str" then
+          result = result .. element.text
+        elseif element.t == "Space" then
+          result = result .. " "
+        elseif element.t == "Strong" then
+          result = result .. "<strong>" .. process_elements(element.c) .. "</strong>"
+        elseif element.t == "Emph" then
+          result = result .. "<em>" .. process_elements(element.c) .. "</em>"
+        elseif element.t == "Plain" or element.t == "Para" then
+          result = result .. process_elements(element.c)
+        else
+          result = result .. "Unhandled element type: " .. element.t
+        end
+      end
+    end
+    return result
+  end
+
+  return process_elements(elements)
+end
+
 -- Extract numeric value from text
 local function extract_numeric(text)
   -- Use pattern to extract numeric part, allowing for commas as thousands separators
@@ -171,14 +199,9 @@ function generate_chart_legend(table)
   -- 3.1 The 1st div is the header from the 1st column of the table
   -- Loop over the remaining headers, if our header == Total then stop and create the total div
   for i, header in ipairs(table.header or {}) do
-    local headerContent = pandoc.utils.stringify(header)
-    
-    -- Check if the header content has markdown bold
-    local isBold = headerContent:match("^%*%*(.-)%*%*$")
-    if isBold then
-      headerContent = "<strong>" .. isBold .. "</strong>"
-    end
-    
+
+    local headerContent = stringify_with_formatting(header)
+
     if i == 1 then
       -- Add the header div for the first column
       legend = legend .. '        <div class="mc-th">' .. headerContent .. '</div>\n'
@@ -276,11 +299,11 @@ function generate_chart_body(table, isNegative, isStacked)
   for i, row in ipairs(table.rows) do
     -- Add the row container
     body = body .. '    <div class="mc-tr">\n      <div class="mc-td mc-key-cell">' ..
-        pandoc.utils.stringify(row[1]) .. '</div>\n'
-
+        stringify_with_formatting(row[1]) .. '</div>\n'
+        
     -- Iterate over each value in the row
     for j = 2, #row do
-      local cell_value = pandoc.utils.stringify(row[j])
+      local cell_value = stringify_with_formatting(row[j])
       local value = extract_numeric(cell_value)
       local width, barClass, margin_left
 
@@ -295,7 +318,7 @@ function generate_chart_body(table, isNegative, isStacked)
         local max_value = find_max_value(table)
         width = value / max_value * 65
       end
-      
+
       -- Generate the appropriate div based on the options
       if j == #row and isStacked then
         body = body .. generate_total_div(cell_value)
@@ -434,6 +457,7 @@ function process_para_block(block, active_table, output)
   end
   return active_table
 end
+
 -- Function: Pandoc
 -- Description: This function processes a Pandoc document by iterating over its blocks and performing specific actions based on the block type.
 -- Parameters:
