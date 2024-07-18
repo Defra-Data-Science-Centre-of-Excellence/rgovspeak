@@ -168,6 +168,24 @@ and charts will be created correctly when published.
 
 ![Auto chart example](chart.PNG)
 
+### New Fonts
+
+The gov.uk fonts are now included in the package and used in the html output. You can easily use the fonts in your plots as they are already registered on package load as "GDS Transport Website".
+
+``` {r}
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +
+  labs(
+    title = "Scatter Plot of Weight vs. Miles Per Gallon",
+    x = "Weight (1000 lbs)",
+    y = "Miles Per Gallon"
+  ) +
+  theme(
+    plot.title = element_text(size = 30, family = "GDS Transport Website"),
+    axis.text.y = element_text(size = 25, family = "GDS Transport Website"),
+    axis.text.x = element_text(size = 25, family = "GDS Transport Website")
+  )
+```
 
 ### Images
 
