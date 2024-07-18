@@ -1,16 +1,17 @@
 Package: rgovspeak
 Type: Package
 Title: Allows govespeak markdown to be used in rmarkdown documents.
-Version: 0.4.0.9010
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Version: 1.0.0
+Author: Mark Kirby
+Maintainer: Mark Kirby 
 Description: Allows govespeak markdown to be used in rmarkdown documents.
     Creates a markdown file compatable with Whitehall publisher and provides
     a html preview of the document as if it were published to gov.uk.
-License: What license is it under?
+License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
+BugReports: https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/issues
 Imports: 
     fs,
     htmltools,
