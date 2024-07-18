@@ -166,7 +166,7 @@ barchart for you in the html output. `rgovspeak's` auto charting implementation 
 will see on gov.uk, formatting issues with text may be visible. This only affects the html draft the markdown is not affected 
 and charts will be created correctly when published.
 
-[![Auto chart example](chart.png)]
+[![Auto chart example](chart.PNG)]
 
 
 ### Images
