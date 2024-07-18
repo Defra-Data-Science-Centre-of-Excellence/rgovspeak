@@ -189,12 +189,12 @@ end
 -- If a column header is "Total", a special styling is applied.
 -- Each column header is enclosed in a <div> element with appropriate classes.
 -- The generated legend HTML code is returned as a string.
-function generate_chart_legend(table)
+function generate_chart_legend(table, isStacked)
   -- 3. set up the legend
   local legend = '    <div class="mc-thead">\n      <div class="mc-tr">\n'
 
   -- 3.1 The 1st div is the header from the 1st column of the table
-  -- Loop over the remaining headers, if our header == Total then stop and create the total div
+  -- Loop over the remaining headers
   for i, header in ipairs(table.header or {}) do
 
     local headerContent = stringify_with_formatting(header)
@@ -202,14 +202,16 @@ function generate_chart_legend(table)
     if i == 1 then
       -- Add the header div for the first column
       legend = legend .. '        <div class="mc-th">' .. headerContent .. '</div>\n'
-    elseif i < #table.header or 0 then
-      -- Modify the total check to work if surrounded by **
-      local isTotal = headerContent:match("^<strong>Total</strong>$") or headerContent == "Total"
-      if isTotal then
-        -- Add the total div with special styling
+    elseif i < #table.header then
+      -- Add the div for other headers with appropriate classes
+      local keyClass = "mc-key-header mc-key-" .. (i - 1)
+      legend = legend .. '        <div class="mc-th ' .. keyClass .. '">' .. headerContent .. '</div>\n'
+    elseif i == #table.header then
+      if isStacked then
+        -- Add the total div with special styling if isStacked is true and we are at the last column
         legend = legend .. '        <div class="mc-th mc-stacked-header mc-header-total">Total</div>\n'
       else
-        -- Add the div for other headers with appropriate classes
+        -- Add the last column as a normal div if isStacked is false
         local keyClass = "mc-key-header mc-key-" .. (i - 1)
         legend = legend .. '        <div class="mc-th ' .. keyClass .. '">' .. headerContent .. '</div>\n'
       end
@@ -320,7 +322,7 @@ function generate_chart_body(table, isNegative, isStacked)
       if j == #row and isStacked then
         body = body .. generate_total_div(cell_value)
       else
-        body = body .. generate_cell_div(value, cell_value, barClass, width, range, isStacked, isNegative)
+        body = body .. generate_cell_div(value, cell_value, barClass, width, isStacked, isNegative)
       end
     end
 
@@ -354,7 +356,7 @@ function generate_chart_html(table, options)
   local chart_class = generate_chart_class(isNegative, isStacked, isCompact)
 
   -- 4 Create the chart legend
-  local legend = generate_chart_legend(table)
+  local legend = generate_chart_legend(table, isStacked)
 
   -- 5 Create the chart body
   local body = generate_chart_body(table, isNegative, isStacked)
@@ -363,7 +365,7 @@ function generate_chart_html(table, options)
 
   -- 6 Close the remaining divs
   html = html .. '  </div></div></div>\n'
-
+  -- print(html)
   chart_id = chart_id + 1
   return html
 end
