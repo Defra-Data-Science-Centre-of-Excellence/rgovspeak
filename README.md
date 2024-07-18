@@ -6,7 +6,11 @@
 It provides a new output format for rmarkdown documents producing a whitehall publisher compatible markdown file and a html preview
 showing what the document will look like when published on gov.uk.
 
-🎉 **Version 0.3 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.3).
+🎉 **Version 1.0 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v1.0).
+
+This version of `rgovspeak` is a complete rewrite of the package. It now behaves like a standard RMarkdown template. 
+
+**Important**: Documents created with earlier versions will not be compatible and will require modification.
 
 <br>
 
@@ -28,15 +32,13 @@ rgovspeak is designed to be used to generate single page documents suitable for 
 Simply add the following header to your Rmd doc
 
     ---
-    title: "rgovspeak doc"
-    date: "`r format(Sys.time(), '%d %B %Y')`"
+    title: My rgovspeak document
     output: rgovspeak::govspeak
     ---
 
 ### 2. ♻️ fully govspeak compatible
 
-All of the markup listed in the govspeak [guide](https://govspeak-preview.herokuapp.com/guide) is implemented. You can use it directly in
-your document.
+All of the markup listed in the govspeak [guide](https://govspeak-preview.publishing.service.gov.uk/guide) is implemented. You can use it directly in your document.
 
 ### 3. 📊 Visualize Statistics
 
@@ -59,31 +61,179 @@ Download the latest [release](https://github.com/Defra-Data-Science-Centre-of-Ex
 the package in r.
 
 ```r
-install.packages("~/Downloads/rgovspeak_0.3.0.zip", repos=NULL)
+install.packages("~/Downloads/rgovspeak_1.0.zip", repos=NULL)
 ```
 
-#### Step 2: write your markdown document
-If you are using Rstudio you can select File -> New File -> R Markdown... then select from template in the popup and then find govspeak in 
-the list.
+## YAML Header Configuration
 
-![](rstudio.png)
+The YAML header in`rgovspeak` is similar to any RMarkdown document. The primary difference lies in specifying the output format.
 
-This will create a folder where all the outputs will be store with the skeleton teplate document.
-
-This shows all the govspeak tags and how to use them. When your ready simply replace the text with your own.
-
-You can also create a new rmarkdown file and add the govespeak header.
+### Basic Output Format
+To render the document as a govspeak document, set the output format to `rgovspeak::govspeak`:
 
     ---
-    title: "rgovspeak doc"
-    date: "`r format(Sys.time(), '%d %B %Y')`"
     output: rgovspeak::govspeak
     ---
 
-This wont create a directory to store everything in any generated files will be in the current working directory.
+### Multiple Output Formats
 
-When your happy with your document press the knit button. This will render an html preview for you, there will be a markdown document with
+You can specify additional output formats (e.g., word_document) alongside `rgovspeak`:
 
-a _govspeak.md prefix and any images will be in the images folder. The file images.csv shows which images were mapped to each govspeak image tag.
 
-These assets can then be uploaded to whitehall publisher or sent to a publication team for upload.
+    ---
+    output: 
+      rgovspeak::govspeak: default
+      word_document: default
+    ---
+
+**Note**: When specifying multiple formats, you must provide options or use `default`. You will also need to render using `rmardown::render` 
+to generate the additional formats as the knit button will only render the 1st output.
+
+### Output Options
+
+You can pass various options to customise the govspeak output. For example, to use multiple image formats and custom image dimensions:
+
+    ---
+    output: 
+      rgovspeak::govspeak: 
+        image_type: ['png', 'jpeg', 'pdf', 'svg', 'tiff']
+        fig_height: 5.5
+        fig_width: 8
+      word_document: default
+    ---
+
+This configuration will render images in all specified formats and override the default image size.
+
+**Note**: The default image format is now `svg`.
+
+#### Typical YAML Header Example 
+
+    ---
+    title: "Agricultural Price Index"
+    output: 
+      rgovspeak::govspeak: default
+      word_document:
+        fig_height: 5.5
+        fig_width: 8
+    ---
+
+This setup produces an HTML version with the default SVG image format and a Word document with resized images for better appearance. 
+This dual-output is useful for quality control and text editing.
+
+### Other setup
+
+`rgovspeak` is designed to render your document in a way that is compatible with Whitehall Publisher and the expectations of the publishing team. 
+Certain naming conventions are required for files to be accepted for publishing. `rgovspeak` will automatically save files under its control with 
+the correct names.
+
+To do this, it needs to know the publishing date of the document. This can be set in the YAML header or as a parameter. If set as a parameter, 
+it will take precedence over the YAML header.
+
+In your code, you can do:
+
+```{r}
+  rgovspeak::set_publication_date(as.Date("2024-7-11"))
+```
+
+This is useful if you are calling 
+
+```{r, eval=FALSE}
+  rmarkdown::render("path/to/your/file.Rmd")
+```
+
+from your script.
+
+If you want to set it in your YAML header use publish_date:
+
+    ---
+    title: "Agricultural Price Index"
+    publish_date: '`r as.Date("2024-04-25")`'
+    output: 
+      rgovspeak::govspeak: default
+      word_document:
+        fig_height: 5.5
+        fig_width: 8
+    ---
+
+Now when files are created during render they will be saved with the correct date in the file name.
+
+**Note**: If you do not set the publishing date using either method the current date will be used by default.
+
+### Auto Barchart
+
+Govspeak provides for the automatic creation of barcharts using the `{barchart}` tag. `rgovspeak` will automatically create the 
+barchart for you in the html output. `rgovspeak's` auto charting implementation is not a pixel perfect recreation of what you 
+will see on gov.uk, formatting issues with text may be visible. This only affects the html draft the markdown is not affected 
+and charts will be created correctly when published.
+
+[![Auto chart example](chart.png)]
+
+
+### Images
+
+`rgovspeak` expects each R chunk to generate a single image. If you have multiple plots in a single chunk, only the last plot will be saved. 
+The image name is derived from the R chunk name and the publishing date of the document. So, name your R chunks accordingly, 
+e.g., 'iris-figure-1' or 'iris-figure-2'.
+
+The default format is now SVG. Once rendered images will appear in the images folder, with subfolders for each image type.
+
+### Datasets
+
+`rgovspeak` can save datasets for you using the `rgovspeak::save_data` function. 
+
+This function takes two arguments: 
+
+1. the name of the function to save the data (e.g., `write.csv`)
+2. a list of arguments to pass to the function (e.g., `list(iris, "iris.csv")`). 
+
+When you render the document, files registered with `rgovspeak` via `rgovspeak::save_data` will be moved to the `data` folder.
+
+To save a CSV file of the iris dataset:
+
+1. write.csv is the function to save the data.
+2. list(iris, "iris.csv") are the arguments to pass to the function (the dataset and the file name).
+
+```{r}
+rgovspeak::save_data("write.csv", list(iris, "iris.csv"))
+```
+
+You can use this function to save any data you need for your document.
+
+For example, to save an Excel file and an ODS file of the iris dataset, ensure the necessary packages (openxlsx and readODS) are installed and loaded:
+
+```{r, eval=requireNamespace("openxlsx", quietly=TRUE) && requireNamespace("readODS", quietly=TRUE)}
+library(openxlsx) 
+library(readODS)
+rgovspeak::save_data("write.xlsx", list(iris, "iris.xlsx"))
+rgovspeak::save_data("write_ods", list(iris, "iris.ods"))
+```
+
+### Output Structure
+
+You will find the saved files in the `data` folder, organised into subfolders based on the file extension. 
+The file names will include the provided name and the publishing date.
+
+You can use the `rgovspeak::save_data` function either within your RMarkdown document or in a separate R script before calling `rmarkdown::render`.
+
+**Note**: This functionality only works when rendering to the govspeak format. If you render to multiple formats, the data will only be moved for the initial render to govspeak.
+
+### Rendering
+
+In previous versions of `rgovspeak`, files were forcefully rendered to a folder named output. The package has since been updated to function 
+like a standard R Markdown template. Now, when you render using the knit button, your documents are rendered to the current directory.
+
+To specify a different directory for output, you can use rmarkdown::render and provide the output_dir argument:
+
+```{r, eval=FALSE}
+rmarkdown::render("path/to/your/file.Rmd", output_dir = "path/to/output")
+```
+
+After rendering, the following files and folders will be created:
+
+1. An HTML file named after your Rmd file, for example, instructions.html.
+2. A text file named after your Rmd file and the publishing date, such as instructions_11jul2024.txt.
+3. A folder named images with subfolders for each image type, if images were included. `rgovspeak` will handle the creation of the image tags within the markdown,
+you do not need to edit the markdown to include the images.
+4. A folder named data with subfolders for each data type, if `rgovspeak::save_data` was utilised.
+
+If you specified an output_dir, these files will be created in that directory. Additional files generated from multiple formats will also be placed in the same directory as the govspeak files.
