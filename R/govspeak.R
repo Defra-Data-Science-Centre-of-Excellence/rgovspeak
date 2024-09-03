@@ -57,10 +57,13 @@ pkg_file <- function(...) {
 }
 
 check_for_figure_html_dir <- function(path) {
-  # Check if a folder that ends with '_files' exists in the provided path
-  files_dir <- dir(path, pattern = "_files$", full.names = TRUE)
+  # Get the suffix for auxiliary files from global options, default to '_files'
+  files_suffix <- getOption("rmarkdown.files.suffix", "_files")
 
-  # Check if a 'figure_html' folder exists inside the '_files' folder
+  # Check if a folder that ends with the specified suffix exists in the provided path
+  files_dir <- dir(path, pattern = paste0(files_suffix, "$"), full.names = TRUE)
+
+  # Check if a 'figure_html' folder exists inside the auxiliary files folder
   figure_html_dir <- list.dirs(files_dir, full.names = FALSE, recursive = FALSE)
 
   # Check if 'figure_html' directory is found
@@ -226,7 +229,11 @@ post_processor <- function(metadata, input_file, output_file, clean, verbose, ..
   renamed_images <- NULL
 
   if (check_for_figure_html_dir(output_dir)) {
-    image_dir <- file.path(output_dir, sub(".knit.md", "_files", input_file), "figure-html")
+    image_dir <- file.path(
+      output_dir,
+      sub(".knit.md", getOption("rmarkdown.files.suffix", "_files"), input_file), 
+      "figure-html"
+    )
     renamed_images <- rename_images(image_dir, date_str)
     move_image_files_to_extension_dirs(image_dir)
   }
