@@ -6,7 +6,7 @@
 It provides a new output format for rmarkdown documents producing a whitehall publisher compatible markdown file and a html preview
 showing what the document will look like when published on gov.uk.
 
-🎉 **Version 1.0.1 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v1.0.1).
+🎉 **Version 1.0.2 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v1.0.2).
 
 This version of `rgovspeak` is a complete rewrite of the package. It now behaves like a standard RMarkdown template. 
 
