@@ -216,11 +216,11 @@ save_data <- function(save_func, args_list) {
 post_processor <- function(metadata, input_file, output_file, clean, verbose, ...) {
   # Sort out the publication date
   if (exists("publication_date", envir = env_state)) {
-    date_str <- format(get("publication_date", envir = env_state), "%d%b%Y")
+    date_str <- format(get("publication_date", envir = env_state), "%Y%m%d")
   } else if (!is.null(metadata$publish_date)) {
-    date_str <- format(as.Date(metadata$publish_date), "%d%b%Y")
+    date_str <- format(as.Date(metadata$publish_date), "%Y%m%d")
   } else {
-    date_str <- format(Sys.Date(), "%d%b%Y")
+    date_str <- format(Sys.Date(), "%Y%m%d")
   }
 
   output_dir <- dirname(output_file)
