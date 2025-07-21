@@ -1,0 +1,15 @@
+.gem-c-attachment-link__abbr {
+  text-decoration: none;
+  cursor: help
+}
+
+@media print {
+  .gem-c-attachment-link .govuk-link {
+    color: #000 !important
+  }
+
+  .gem-c-attachment-link .govuk-link::after {
+    font-size: inherit;
+    color: inherit
+  }
+}

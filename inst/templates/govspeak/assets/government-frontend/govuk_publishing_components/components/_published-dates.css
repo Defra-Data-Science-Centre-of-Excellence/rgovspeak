@@ -1,0 +1,73 @@
+.gem-c-published-dates {
+  direction: ltr;
+  line-height: 1.45em;
+  color: #0b0c0c
+}
+
+.direction-rtl .gem-c-published-dates {
+  direction: rtl
+}
+
+.gem-c-published-dates__toggle {
+  display: none
+}
+
+.govuk-frontend-supported .gem-c-published-dates__toggle {
+  display: inline-block
+}
+
+.gem-c-published-dates__change-history {
+  margin: 20px 0
+}
+
+.gem-c-published-dates__list {
+  padding: 0
+}
+
+.gem-c-published-dates__change-item {
+  list-style-type: none;
+  margin-bottom: 10px
+}
+
+.gem-c-published-dates__change-date {
+  display: block;
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.25
+}
+
+@media print {
+  .gem-c-published-dates__change-date {
+    font-family: sans-serif
+  }
+}
+
+@media print {
+  .gem-c-published-dates__change-date {
+    font-size: 14pt;
+    line-height: 1.2
+  }
+}
+
+.gem-c-published-dates__change-note {
+  white-space: pre-line
+}
+
+.gem-c-published-dates--history {
+  padding-top: 10px;
+  border-top: 1px solid #b1b4b6
+}
+
+.govuk-frontend-supported .gem-c-published-dates .js-hidden {
+  display: none;
+  visibility: hidden
+}
+
+@media print {
+  .gem-c-published-dates {
+    margin-top: 10mm
+  }
+}

@@ -1,0 +1,54 @@
+.gem-c-lead-paragraph {
+  margin-top: 0;
+  max-width: 30em;
+  color: #0b0c0c;
+  margin-bottom: 15px;
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 1.3125rem;
+  line-height: 1.1904761905
+}
+
+@media print {
+  .gem-c-lead-paragraph {
+    color: #000
+  }
+}
+
+@media(min-width: 40.0625em) {
+  .gem-c-lead-paragraph {
+    margin-bottom: 40px
+  }
+}
+
+@media print {
+  .gem-c-lead-paragraph {
+    font-family: sans-serif
+  }
+}
+
+@media(min-width: 40.0625em) {
+  .gem-c-lead-paragraph {
+    font-size: 1.5rem;
+    line-height: 1.25
+  }
+}
+
+@media print {
+  .gem-c-lead-paragraph {
+    font-size: 18pt;
+    line-height: 1.15
+  }
+}
+
+.gem-c-lead-paragraph--inverse {
+  color: #fff
+}
+
+@media print {
+  .gem-c-lead-paragraph {
+    color: #000
+  }
+}

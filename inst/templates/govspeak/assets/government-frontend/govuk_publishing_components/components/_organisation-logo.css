@@ -1,0 +1,272 @@
+.gem-c-organisation-logo {
+  font-weight: 400;
+  margin: 0;
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 1.1875rem;
+  line-height: 1.3157894737
+}
+
+@media print {
+  .gem-c-organisation-logo {
+    font-family: sans-serif
+  }
+}
+
+@media print {
+  .gem-c-organisation-logo {
+    font-size: 14pt;
+    line-height: 1.15
+  }
+}
+
+@media(max-width: 40.0525em) {
+  .gem-c-organisation-logo {
+    line-height: 1.35
+  }
+}
+
+.gem-c-organisation-logo__container {
+  text-transform: none;
+  text-decoration: none;
+  display: block;
+  color: #0b0c0c;
+  height: auto;
+  width: auto;
+  direction: ltr
+}
+
+.gem-c-organisation-logo__container--inline {
+  display: inline-block;
+  padding-right: 5px
+}
+
+.gem-c-organisation-logo__image {
+  max-width: 320px
+}
+
+@media(max-width: 40.0525em) {
+  .gem-c-organisation-logo__image {
+    width: 100%;
+    max-width: 240px
+  }
+}
+
+.gem-c-organisation-logo__crest {
+  border-left: 2px solid #0b0c0c;
+  padding-top: 35px;
+  padding-left: 8px
+}
+
+.brand--executive-office .gem-c-organisation-logo__crest {
+  border-left-width: 0;
+  padding-left: 0;
+  background-position: 0 0
+}
+
+.gem-c-organisation-logo__name {
+  font-family: HelveticaNeue, "Helvetica Neue", Arial, Helvetica, sans-serif
+}
+
+.gem-c-organisation-logo__link {
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, .0625rem);
+  text-underline-offset: .1578em
+}
+
+@media print {
+  .gem-c-organisation-logo__link {
+    font-family: sans-serif
+  }
+}
+
+.gem-c-organisation-logo__link:hover {
+  text-decoration-thickness: max(3px, .1875rem, .12em);
+  -webkit-text-decoration-skip-ink: none;
+  text-decoration-skip-ink: none;
+  -webkit-text-decoration-skip: none;
+  text-decoration-skip: none
+}
+
+.gem-c-organisation-logo__link:focus {
+  outline: 3px solid rgba(0, 0, 0, 0);
+  color: #0b0c0c;
+  background-color: #fd0;
+  box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+  text-decoration: none
+}
+
+@supports not (text-wrap: balance) {
+  .gem-c-organisation-logo__link:focus {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone
+  }
+}
+
+.gem-c-organisation-logo__link:link,
+.gem-c-organisation-logo__link:visited {
+  color: #0b0c0c
+}
+
+@media print {
+
+  .gem-c-organisation-logo__link:link,
+  .gem-c-organisation-logo__link:visited {
+    color: #000
+  }
+}
+
+.gem-c-organisation-logo__link:hover {
+  color: rgba(11, 12, 12, .99)
+}
+
+.gem-c-organisation-logo__link:active,
+.gem-c-organisation-logo__link:focus {
+  color: #0b0c0c
+}
+
+@media print {
+
+  .gem-c-organisation-logo__link:active,
+  .gem-c-organisation-logo__link:focus {
+    color: #000
+  }
+}
+
+.gem-c-organisation-logo__link {
+  font-family: HelveticaNeue, "Helvetica Neue", Arial, Helvetica, sans-serif
+}
+
+.gem-c-organisation-logo__link:hover {
+  color: #003078
+}
+
+.gem-c-organisation-logo__link:active {
+  color: #0b0c0c;
+  text-decoration-thickness: max(3px, .1875rem, .12em);
+  -webkit-text-decoration-skip-ink: none;
+  text-decoration-skip-ink: none;
+  -webkit-text-decoration-skip: none;
+  text-decoration-skip: none
+}
+
+.gem-c-organisation-logo__link:focus {
+  box-shadow: 0 -2px #fd0, 0 4px #fd0, 0 8px #0b0c0c;
+  text-decoration: none
+}
+
+.gem-c-organisation-logo__link-hide-underline:link:not(:hover) {
+  text-decoration: none
+}
+
+.gem-c-organisation-logo--inverse .gem-c-organisation-logo__container {
+  border-color: #fff
+}
+
+.gem-c-organisation-logo--inverse .gem-c-organisation-logo__container:link,
+.gem-c-organisation-logo--inverse .gem-c-organisation-logo__container:visited {
+  color: #fff
+}
+
+.gem-c-organisation-logo--inverse .gem-c-organisation-logo__container:hover,
+.gem-c-organisation-logo--inverse .gem-c-organisation-logo__container:active {
+  color: hsla(0, 0%, 100%, .99)
+}
+
+.gem-c-organisation-logo--inverse .gem-c-organisation-logo__container:focus {
+  color: #0b0c0c
+}
+
+.gem-c-organisation-logo--inverse .gem-c-organisation-logo__crest {
+  filter: brightness(0) invert(1)
+}
+
+.gem-c-organisation-logo--inverse .gem-c-organisation-logo__crest:focus {
+  filter: none
+}
+
+.gem-c-organisation-logo__crest--dbt {
+  background: url("../crests/dbt_crest_18px_x2.png") no-repeat 9px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--bis {
+  background: url("../crests/bis_crest_18px_x2.png") no-repeat 9px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--gds {
+  background: url("../crests/gds_crest_18px_x2.png") no-repeat 8px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--hmrc {
+  background: url("../crests/hmrc_crest_18px_x2.png") no-repeat 8px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--ho {
+  background: url("../crests/ho_crest_18px_x2.png") no-repeat 9px 0;
+  background-size: auto 32px;
+  padding-top: 39px;
+  background-size: auto 34px
+}
+
+.gem-c-organisation-logo__crest--mod {
+  background: url("../crests/mod_crest_18px_x2.png") no-repeat 9px 0;
+  background-size: auto 32px;
+  padding-top: 39px;
+  background-size: auto 34px
+}
+
+.gem-c-organisation-logo__crest--no10 {
+  background: url("../crests/no10_crest_18px_x2.png") no-repeat 8px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--single-identity,
+.gem-c-organisation-logo__crest--eo,
+.gem-c-organisation-logo__crest--org {
+  background: url("../crests/org_crest_18px_x2.png") no-repeat 8px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--portcullis {
+  background: url("../crests/portcullis_18px_x2.png") no-repeat 9px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--so {
+  background: url("../crests/so_crest_18px_x2.png") no-repeat 9px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--ukaea {
+  background: url("../crests/ukaea_crest_18px_x2.png") no-repeat 9px 0;
+  background-size: auto 32px
+}
+
+.gem-c-organisation-logo__crest--ukho {
+  background: url("../crests/ukho_18px_x2.png") no-repeat 8px 0;
+  background-size: auto 32px;
+  padding-top: 39px;
+  background-size: auto 34px
+}
+
+.gem-c-organisation-logo__crest--wales {
+  background: url("../crests/wales_crest_18px_x2.png") no-repeat 9px 0;
+  background-size: auto 32px;
+  padding-top: 39px;
+  background-size: auto 34px
+}
+
+@media print {
+  .gem-c-organisation-logo__container {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact
+  }
+}

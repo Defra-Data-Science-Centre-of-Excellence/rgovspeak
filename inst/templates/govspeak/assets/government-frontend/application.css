@@ -1,0 +1,289 @@
+.responsive-bottom-margin {
+  margin-bottom: 15px
+}
+
+@media(min-width: 40.0625em) {
+  .responsive-bottom-margin {
+    margin-bottom: 50px
+  }
+}
+
+.organisation-logos {
+  list-style-type: none;
+  margin-top: 10px;
+  padding: 0
+}
+
+.organisation-logos__logo {
+  display: inline-block;
+  vertical-align: top;
+  padding-bottom: 15px;
+  margin-right: 30px
+}
+
+@media(max-width: 48.0525em) {
+  .organisation-logos__logo img {
+    width: 140px
+  }
+}
+
+@media(min-width: 48.0625em) {
+  .organisation-logos__logo img {
+    max-width: 240px
+  }
+}
+
+.content-bottom-margin {
+  margin-bottom: 20px
+}
+
+@media(min-width: 40.0625em) {
+  .content-bottom-margin {
+    margin-bottom: 15px
+  }
+}
+
+@media(min-width: 40.0625em)and (min-width: 40.0625em) {
+  .content-bottom-margin {
+    margin-bottom: 50px
+  }
+}
+
+.metadata-logo-wrapper {
+  border-top: 1px solid #b1b4b6;
+  margin-left: 15px;
+  margin-right: 15px
+}
+
+.metadata-logo-wrapper::after {
+  content: "";
+  display: block;
+  clear: both
+}
+
+.metadata-logo-wrapper .metadata-column {
+  padding-left: 0;
+  padding-top: 15px
+}
+
+.metadata-logo-wrapper .metadata-logo {
+  max-height: 90px;
+  max-width: 100%;
+  padding-bottom: 15px;
+  padding-top: 15px
+}
+
+@media(min-width: 40.0625em) {
+  .metadata-logo-wrapper .metadata-logo {
+    float: right
+  }
+}
+
+.govuk-frontend-supported .sticky-element {
+  position: absolute;
+  bottom: 0
+}
+
+.govuk-frontend-supported .sticky-element--stuck-to-window {
+  bottom: 0;
+  position: fixed
+}
+
+.govuk-frontend-supported .sticky-element--enabled {
+  transition: opacity, .3s, ease;
+  opacity: 1
+}
+
+@media(max-width: 40.0525em) {
+  .govuk-frontend-supported .sticky-element--enabled {
+    position: static
+  }
+}
+
+.govuk-frontend-supported .sticky-element--hidden {
+  opacity: 0;
+  pointer-events: none
+}
+
+.worldwide-organisation-header {
+  margin-top: 15px;
+  margin-bottom: 15px
+}
+
+.govuk-frontend-supported .worldwide-organisation-header .show-other-content {
+  all: inherit;
+  display: inline;
+  margin-left: .3em;
+  white-space: nowrap;
+  color: #1d70b8;
+  cursor: pointer;
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, .0625rem);
+  text-underline-offset: .1578em;
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.25
+}
+
+@media print {
+  .govuk-frontend-supported .worldwide-organisation-header .show-other-content {
+    font-family: sans-serif
+  }
+}
+
+.govuk-frontend-supported .worldwide-organisation-header .show-other-content:hover {
+  text-decoration-thickness: max(3px, .1875rem, .12em);
+  -webkit-text-decoration-skip-ink: none;
+  text-decoration-skip-ink: none;
+  -webkit-text-decoration-skip: none;
+  text-decoration-skip: none
+}
+
+.govuk-frontend-supported .worldwide-organisation-header .show-other-content:focus {
+  outline: 3px solid rgba(0, 0, 0, 0);
+  color: #0b0c0c;
+  background-color: #fd0;
+  box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+  text-decoration: none
+}
+
+@supports not (text-wrap: balance) {
+  .govuk-frontend-supported .worldwide-organisation-header .show-other-content:focus {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone
+  }
+}
+
+@media print {
+  .govuk-frontend-supported .worldwide-organisation-header .show-other-content {
+    font-family: sans-serif
+  }
+}
+
+@media print {
+  .govuk-frontend-supported .worldwide-organisation-header .show-other-content {
+    font-size: 14pt;
+    line-height: 1.2
+  }
+}
+
+@media(min-width: 40.0625em) {
+  .worldwide-organisation-header__logo {
+    margin-top: 15px
+  }
+}
+
+.worldwide-organisation-header__metadata {
+  margin-top: 10px
+}
+
+.worldwide-organisation-header__metadata dl {
+  margin: 0;
+  color: #0b0c0c;
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.25;
+  margin-bottom: 15px
+}
+
+@media print {
+  .worldwide-organisation-header__metadata dl {
+    color: #000
+  }
+}
+
+@media print {
+  .worldwide-organisation-header__metadata dl {
+    font-family: sans-serif
+  }
+}
+
+@media print {
+  .worldwide-organisation-header__metadata dl {
+    font-size: 14pt;
+    line-height: 1.2
+  }
+}
+
+@media(min-width: 40.0625em) {
+  .worldwide-organisation-header__metadata dl {
+    margin-bottom: 20px
+  }
+}
+
+@supports(display: grid) {
+  .worldwide-organisation-header__metadata dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 10px
+  }
+}
+
+.worldwide-organisation-header__metadata dl dt,
+.worldwide-organisation-header__metadata dl dd {
+  display: block;
+  line-height: 1.5em;
+  margin: 0
+}
+
+.worldwide-organisation-contact-section a {
+  overflow-wrap: break-word;
+  word-wrap: break-word
+}
+
+.worldwide-organisation-contact-section address {
+  font-style: normal
+}
+
+.worldwide-organisation-contact-section address .adr {
+  margin-block: 0
+}
+
+.direction-rtl .case-study,
+.direction-rtl .corporate-information-page,
+.direction-rtl .detailed-guide,
+.direction-rtl .html-publication,
+.direction-rtl .publication,
+.direction-rtl .worldwide-organisation,
+.direction-rtl .worldwide-corporate-information-page {
+  direction: rtl;
+  text-align: start
+}
+
+.direction-rtl .case-study table th,
+.direction-rtl .corporate-information-page table th,
+.direction-rtl .detailed-guide table th,
+.direction-rtl .html-publication table th,
+.direction-rtl .publication table th,
+.direction-rtl .worldwide-organisation table th,
+.direction-rtl .worldwide-corporate-information-page table th {
+  text-align: start
+}
+
+@media print {
+
+  main[lang=ar],
+  main[lang=he],
+  main[lang=ur] {
+    direction: rtl;
+    text-align: start
+  }
+}
+
+.constrained-image {
+  max-width: 100%
+}
+
+.inverse-background {
+  background: #1d70b8;
+  color: #fff
+}
