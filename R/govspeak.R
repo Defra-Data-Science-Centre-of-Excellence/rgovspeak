@@ -29,20 +29,26 @@ application_js_dependency <- function() {
 govspeak_dependency <- function() {
   htmltools::htmlDependency(
     name = "govspeak",
-    version = "0.2",
+    version = "5.10.1",
     src = system.file("templates/govspeak", package = "rgovspeak"),
     stylesheet = c(
-      "application.css",
-      "application2.css",
-      "html_publication.css",
-      "organisation_logo.css",
-      "inverse_header.css",
-      "contents_list.css",
-      "toc.css",
-      "print_link.css",
-      "govspeak_html_publication.css",
-      "govspeak.css",
-      "back_to_top.css"
+      "assets/static/application.css",
+      "assets/government-frontend/application.css",
+      "assets/government-frontend/views/_html-publication.css",
+      "assets/government-frontend/govuk_publishing_components/components/_organisation-logo.css",
+      "assets/government-frontend/govuk_publishing_components/components/_attachment.css",
+      "assets/government-frontend/govuk_publishing_components/components/_attachment-link.css",
+      "assets/government-frontend/govuk_publishing_components/components/_contextual-sidebar.css",
+      "assets/government-frontend/govuk_publishing_components/components/_details.css",
+      "assets/government-frontend/govuk_publishing_components/components/_govspeak.css",
+      "assets/government-frontend/govuk_publishing_components/components/_lead-paragraph.css",
+      "assets/government-frontend/govuk_publishing_components/components/_metadata.css",
+      "assets/government-frontend/govuk_publishing_components/components/_print-link.css",
+      "assets/government-frontend/govuk_publishing_components/components/_published-dates.css",
+      "assets/government-frontend/govuk_publishing_components/components/_related-navigation.css",
+      "assets/government-frontend/govuk_publishing_components/components/_single-page-notification-button.css",
+      "assets/government-frontend/govuk_publishing_components/components/_inverse-header.css",
+      "assets/government-frontend/govuk_publishing_components/components/_contents-list.css"
     )
   )
 }
@@ -78,7 +84,11 @@ rename_images <- function(image_dir, date_str) {
   files <- list.files(image_dir)
 
   # Create a data frame to store the original and new filenames
-  filenames_df <- data.frame(Original = character(), New = character(), stringsAsFactors = FALSE)
+  filenames_df <- data.frame(
+    Original = character(),
+    New = character(),
+    stringsAsFactors = FALSE
+  )
 
   # Loop over each file
   for (file in files) {
@@ -89,15 +99,28 @@ rename_images <- function(image_dir, date_str) {
     ext <- fs::path_ext(file)
 
     # Construct the new file name by appending the date_str to the end of the file name
-    new_filename_with_date <- paste0(fs::path_ext_remove(new_filename), "_", date_str, ".", ext)
+    new_filename_with_date <- paste0(
+      fs::path_ext_remove(new_filename),
+      "_",
+      date_str,
+      ".",
+      ext
+    )
 
     # Move the file to the new filename
-    fs::file_move(path = fs::path(image_dir, file), new_path = fs::path(image_dir, new_filename_with_date))
+    fs::file_move(
+      path = fs::path(image_dir, file),
+      new_path = fs::path(image_dir, new_filename_with_date)
+    )
 
     # Add the original and new filenames to the data frame
     filenames_df <- rbind(
       filenames_df,
-      data.frame(Original = file, New = new_filename_with_date, stringsAsFactors = FALSE)
+      data.frame(
+        Original = file,
+        New = new_filename_with_date,
+        stringsAsFactors = FALSE
+      )
     )
   }
 
@@ -138,7 +161,11 @@ move_image_files_to_extension_dirs <- function(image_dir) {
   }
 }
 
-move_data_files_to_extension_dirs <- function(file_names, output_dir, date_str) {
+move_data_files_to_extension_dirs <- function(
+  file_names,
+  output_dir,
+  date_str
+) {
   # If no files were saved using save_data() then return
   if (length(file_names) == 0) {
     return()
@@ -167,13 +194,22 @@ move_data_files_to_extension_dirs <- function(file_names, output_dir, date_str) 
   # Rename the files and move them to subfolders based on their extensions
   for (file in moved_files) {
     # Remove the "-number" suffix from the filename
-    new_filename <- stringr::str_remove(string = fs::path_file(file), pattern = "-\\d+(?=\\.)")
+    new_filename <- stringr::str_remove(
+      string = fs::path_file(file),
+      pattern = "-\\d+(?=\\.)"
+    )
 
     # Get the file extension
     ext <- fs::path_ext(file)
 
     # Construct the new file name by appending the date_str to the end of the file name
-    new_filename_with_date <- paste0(fs::path_ext_remove(new_filename), "_", date_str, ".", ext)
+    new_filename_with_date <- paste0(
+      fs::path_ext_remove(new_filename),
+      "_",
+      date_str,
+      ".",
+      ext
+    )
 
     # If the file extension is in the extensions vector, move it to a subfolder
     if (ext %in% extensions) {
@@ -205,7 +241,9 @@ save_data <- function(save_func, args_list) {
 
   output_format <- knitr::opts_knit$get("rmarkdown.pandoc.to")
 
-  if (!is.null(file_name) && (is.null(output_format) || output_format == "html")) {
+  if (
+    !is.null(file_name) && (is.null(output_format) || output_format == "html")
+  ) {
     # Add the file name to the global list
     env_state$file_names <- c(env_state$file_names, file_name)
   }
@@ -213,7 +251,14 @@ save_data <- function(save_func, args_list) {
   do.call(save_func, args_list)
 }
 
-post_processor <- function(metadata, input_file, output_file, clean, verbose, ...) {
+post_processor <- function(
+  metadata,
+  input_file,
+  output_file,
+  clean,
+  verbose,
+  ...
+) {
   # Sort out the publication date
   if (exists("publication_date", envir = env_state)) {
     date_str <- format(get("publication_date", envir = env_state), "%Y%m%d")
@@ -231,7 +276,11 @@ post_processor <- function(metadata, input_file, output_file, clean, verbose, ..
   if (check_for_figure_html_dir(output_dir)) {
     image_dir <- file.path(
       output_dir,
-      sub(".knit.md", getOption("rmarkdown.files.suffix", "_files"), input_file), 
+      sub(
+        ".knit.md",
+        getOption("rmarkdown.files.suffix", "_files"),
+        input_file
+      ),
       "figure-html"
     )
     renamed_images <- rename_images(image_dir, date_str)
@@ -247,7 +296,12 @@ post_processor <- function(metadata, input_file, output_file, clean, verbose, ..
   govspeak_file <- convert_md(input_file, renamed_images)
 
   # Write the govspeak_file to "govspeak.txt" in the same directory as the output_file
-  govspeak_file_name <- paste0(fs::path_ext_remove(basename(output_file)), "_", date_str, ".txt")
+  govspeak_file_name <- paste0(
+    fs::path_ext_remove(basename(output_file)),
+    "_",
+    date_str,
+    ".txt"
+  )
   writeLines(govspeak_file, file.path(dirname(output_file), govspeak_file_name))
 
   output_file
@@ -341,13 +395,14 @@ clean_up <- function(input_file) {
 # This function converts GovSpeak markup language to HTML.
 #' @export
 govspeak <- function(
-    image_type = "svg",
-    fig_width = 960 / 72,
-    fig_height = 640 / 72,
-    dpi = 72,
-    pandoc_args = NULL,
-    keep_md = FALSE,
-    ...) {
+  image_type = "svg",
+  fig_width = 960 / 72,
+  fig_height = 640 / 72,
+  dpi = 72,
+  pandoc_args = NULL,
+  keep_md = FALSE,
+  ...
+) {
   # dependencies
   extra_dependencies <- list(
     govspeak_dependency(),
@@ -375,7 +430,13 @@ govspeak <- function(
   )
 
   # knitr options
-  knitr_options <- rmarkdown::knitr_options_html(fig_width, fig_height, NULL, TRUE, dev = image_type)
+  knitr_options <- rmarkdown::knitr_options_html(
+    fig_width,
+    fig_height,
+    NULL,
+    TRUE,
+    dev = image_type
+  )
 
   rmarkdown::output_format(
     knitr = knitr_options,

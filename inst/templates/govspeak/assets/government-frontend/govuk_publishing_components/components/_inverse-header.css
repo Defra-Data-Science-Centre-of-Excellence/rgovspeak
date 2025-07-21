@@ -1,0 +1,52 @@
+.gem-c-inverse-header {
+  width: 100%;
+  background-color: #1d70b8;
+  color: #fff;
+  margin-bottom: 30px;
+  padding: 15px 30px 30px 30px;
+  box-sizing: border-box
+}
+
+.gem-c-inverse-header__subtext {
+  color: #fff;
+  margin: 0;
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5
+}
+
+@media print {
+  .gem-c-inverse-header__subtext {
+    font-family: sans-serif
+  }
+}
+
+@media print {
+  .gem-c-inverse-header__subtext {
+    font-size: 14pt;
+    line-height: 1.5
+  }
+}
+
+.gem-c-inverse-header--full-width {
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 15px
+}
+
+@media print {
+  .gem-c-inverse-header {
+    background: none;
+    padding-left: 0;
+    padding-right: 0;
+    border-bottom: 2pt solid #000
+  }
+
+  .gem-c-inverse-header,
+  .gem-c-inverse-header * {
+    color: #000 !important
+  }
+}

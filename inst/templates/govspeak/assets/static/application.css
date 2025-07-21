@@ -19,14 +19,14 @@
 	font-family: "GDS Transport";
 	font-style: normal;
 	font-weight: normal;
-	src: url("assets/static/light.woff2") format("woff2");
+	src: url("light.woff2") format("woff2");
 }
 
 @font-face {
 	font-family: "GDS Transport";
 	font-style: normal;
 	font-weight: bold;
-	src: url("assets/static/bold.woff2") format("woff2");
+	src: url("bold.woff2") format("woff2");
 	font-display: fallback
 }
 
@@ -4052,7 +4052,7 @@
 	width: 40px;
 	height: 40px;
 	height: 2.5rem;
-	background: url("assets/static/govuk_publishing_components/icon-search.svg") no-repeat -3px center
+	background: url("govuk_publishing_components/icon-search.svg") no-repeat -3px center
 }
 
 .gem-c-input.govuk-input {
@@ -4184,7 +4184,7 @@
 
 .gem-c-search__input[type=search]::-webkit-search-cancel-button {
 	-webkit-appearance: none;
-	background-image: url("assets/static/govuk_publishing_components/icon-close.svg");
+	background-image: url("govuk_publishing_components/icon-close.svg");
 	background-position: center;
 	background-repeat: no-repeat;
 	cursor: pointer;
@@ -4443,8 +4443,8 @@
 	height: 40px;
 	margin-right: 10px;
 	flex: none;
-	mask-image: url("assets/static/govuk_publishing_components/icon-autocomplete-search-suggestion.svg");
-	-webkit-mask-image: url("assets/static/govuk_publishing_components/icon-autocomplete-search-suggestion.svg");
+	mask-image: url("govuk_publishing_components/icon-autocomplete-search-suggestion.svg");
+	-webkit-mask-image: url("govuk_publishing_components/icon-autocomplete-search-suggestion.svg");
 	background-color: #505a5f
 }
 
@@ -6245,7 +6245,7 @@
 	display: block;
 	width: 100%;
 	padding-top: 112px;
-	background-image: url("assets/static/govuk-crest.svg");
+	background-image: url("govuk-crest.svg");
 	background-repeat: no-repeat;
 	background-position: 50% 0%;
 	background-size: 125px 102px;
@@ -6256,8 +6256,8 @@
 @supports(-webkit-mask-position: initial) or (mask-position: initial) {
 	.govuk-footer__copyright-logo::before {
 		background: currentcolor;
-		-webkit-mask-image: url("assets/static/govuk-crest.svg");
-		mask-image: url("assets/static/govuk-crest.svg");
+		-webkit-mask-image: url("govuk-crest.svg");
+		mask-image: url("govuk-crest.svg");
 		-webkit-mask-repeat: no-repeat;
 		mask-repeat: no-repeat;
 		-webkit-mask-position: 50% 0%;
@@ -8199,7 +8199,7 @@
 }
 
 .draft main {
-	background-image: url("assets/static/draft-watermark.png");
+	background-image: url("draft-watermark.png");
 	background-repeat: repeat-y;
 	background-position: 50% 0;
 	background-size: contain
