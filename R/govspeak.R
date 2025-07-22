@@ -16,7 +16,7 @@ application_js_dependency <- function() {
   htmltools::htmlDependency(
     name = "application.js",
     version = "1.0",
-    src = system.file("templates/govspeak", package = "rgovspeak"),
+    src = system.file(fs::path("templates", "govspeak"), package = "rgovspeak"),
     script = "application.js"
   )
 }
@@ -27,28 +27,32 @@ application_js_dependency <- function() {
 #' source, and stylesheet.
 #' @return A HTML dependency object for Govspeak templates
 govspeak_dependency <- function() {
+  base_asset <- "assets"
+  base_frontend <- fs::path(base_asset, "government-frontend")
+  base_components <- fs::path(base_frontend, "govuk_publishing_components", "components")
+
   htmltools::htmlDependency(
-    name = "govspeak",
-    version = "5.10.1",
-    src = system.file("templates/govspeak", package = "rgovspeak"),
+    name = "rgovspeak",
+    version = "1.1.0",
+    src = system.file(fs::path("templates", "govspeak"), package = "rgovspeak"),
     stylesheet = c(
-      "assets/static/application.css",
-      "assets/government-frontend/application.css",
-      "assets/government-frontend/views/_html-publication.css",
-      "assets/government-frontend/govuk_publishing_components/components/_organisation-logo.css",
-      "assets/government-frontend/govuk_publishing_components/components/_attachment.css",
-      "assets/government-frontend/govuk_publishing_components/components/_attachment-link.css",
-      "assets/government-frontend/govuk_publishing_components/components/_contextual-sidebar.css",
-      "assets/government-frontend/govuk_publishing_components/components/_details.css",
-      "assets/government-frontend/govuk_publishing_components/components/_govspeak.css",
-      "assets/government-frontend/govuk_publishing_components/components/_lead-paragraph.css",
-      "assets/government-frontend/govuk_publishing_components/components/_metadata.css",
-      "assets/government-frontend/govuk_publishing_components/components/_print-link.css",
-      "assets/government-frontend/govuk_publishing_components/components/_published-dates.css",
-      "assets/government-frontend/govuk_publishing_components/components/_related-navigation.css",
-      "assets/government-frontend/govuk_publishing_components/components/_single-page-notification-button.css",
-      "assets/government-frontend/govuk_publishing_components/components/_inverse-header.css",
-      "assets/government-frontend/govuk_publishing_components/components/_contents-list.css"
+      fs::path(base_asset, "static", "application.css"),
+      fs::path(base_frontend, "application.css"),
+      fs::path(base_frontend, "views", "_html-publication.css"),
+      fs::path(base_components, "_organisation-logo.css"),
+      fs::path(base_components, "_attachment.css"),
+      fs::path(base_components, "_attachment-link.css"),
+      fs::path(base_components, "_contextual-sidebar.css"),
+      fs::path(base_components, "_details.css"),
+      fs::path(base_components, "_govspeak.css"),
+      fs::path(base_components, "_lead-paragraph.css"),
+      fs::path(base_components, "_metadata.css"),
+      fs::path(base_components, "_print-link.css"),
+      fs::path(base_components, "_published-dates.css"),
+      fs::path(base_components, "_related-navigation.css"),
+      fs::path(base_components, "_single-page-notification-button.css"),
+      fs::path(base_components, "_inverse-header.css"),
+      fs::path(base_components, "_contents-list.css")
     )
   )
 }
@@ -241,9 +245,7 @@ save_data <- function(save_func, args_list) {
 
   output_format <- knitr::opts_knit$get("rmarkdown.pandoc.to")
 
-  if (
-    !is.null(file_name) && (is.null(output_format) || output_format == "html")
-  ) {
+  if (!is.null(file_name) && (is.null(output_format) || output_format == "html")) {
     # Add the file name to the global list
     env_state$file_names <- c(env_state$file_names, file_name)
   }
@@ -326,6 +328,9 @@ convert_md <- function(input_file, renamed_images) {
     convert_callouts() |>
     remove_rmd_blocks()
 
+  # Remove HTML comments
+  govspeak_file <- gsub("<!--.*?-->", "", govspeak_file, perl = TRUE)
+
   if (!is.null(renamed_images)) {
     govspeak_file <- convert_image_tags(govspeak_file, renamed_images)
   }
@@ -394,10 +399,11 @@ clean_up <- function(input_file) {
 
 # This function converts GovSpeak markup language to HTML.
 #' @export
+#' @param department The department name to use for the logo HTML (optional)
 govspeak <- function(
   image_type = "svg",
-  fig_width = 960 / 72,
-  fig_height = 640 / 72,
+  fig_width = 960L / 72L,
+  fig_height = 640L / 72L,
   dpi = 72,
   pandoc_args = NULL,
   keep_md = FALSE,
@@ -449,7 +455,7 @@ govspeak <- function(
       template_dependencies = list(govspeak_dependency()),
       extra_dependencies = extra_dependencies,
       toc = TRUE,
-      toc_level = 3,
+      toc_level = 3L,
       ...
     )
   )
