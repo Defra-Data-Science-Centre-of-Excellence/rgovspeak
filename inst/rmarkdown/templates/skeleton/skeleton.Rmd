@@ -1,37 +1,160 @@
 ---
 title: rgovspeak guide
 author: Mark Kirby
+department: "department_for_science_innovation_technology"
+caption: "How to use rgovspeak for accessible GOV.UK content"
 output: 
-  rgovspeak2::govspeak:
+  rgovspeak::govspeak:
     image_type: ['png', 'jpeg', 'pdf', 'svg', 'tiff']
 ---
 
 ```{r setup, include=FALSE}
 library(ggplot2)
+library(afcharts)
 ```
 
-## Markdown 
 
-### Using Markdown to format content on GOV.UK.
 
-The markdown listed here is the markdown that is supported by the rgovspeak packages html preview. 
-For a full list of markdown you can use on GOV.UK see the 
-[GOV.UK Markdown guide](https://govspeak-preview.publishing.service.gov.uk/guide).
+## 1. Introduction to GOV.UK Markdown
 
-If you want to check that any govspeak markdown will be supported you can use the 
-[Govspeak converter](https://govspeak-preview.publishing.service.gov.uk/).
+### 1.1 Supported Markdown Syntax
 
-## Addresses
-For addresses use the Markdown $A above and below the address text. For example:
+This guide outlines the markdown supported by the \`rgovspeak\` package's HTML preview.
+
+- Full documentation: [GOV.UK Markdown guide](https://govspeak-preview.publishing.service.gov.uk/guide)
+- Test your Markdown: [Govspeak converter](https://govspeak-preview.publishing.service.gov.uk/)
+
+## 2. Text Formatting
+
+### 2.1 Headings
+
+Use heading-level markdown (`##`, `###`, `####`) to create H2, H3, H4 headings. Do **not** use bold text for headings.
+
+Examples:
+
+`## This is an H2 subheading example`
+
+`### This is an H3 subheading example`
+
+`#### This is an H4 subheading example`
+    
+This is what they look like:
+
+## This is an H2 subheading example
+
+### This is an H3 subheading example
+
+#### This is an H4 subheading example
+
+
+More guidance: [Content design manual](https://www.gov.uk/guidance/content-design/writing-for-gov-uk#structuring-content)
+
+### 2.2 Subscript and Superscript
+
+- Subscript: `text<sub>sub</sub>` → text<sub>sub</sub>
+- Superscript: `text<sup>super</sup>` → text<sup>super</sup>
+
+Use for chemical formulas, units, etc.
+
+## 3. Lists
+
+### 3.1 Bulleted (Unordered) Lists
+
+Use `*`, `-`, or `+` with 2-space indents for sub-items.
+
+```markdown
+* Item 1
+* Item 2
+  - Subitem
+```
+
+* Item 1
+* Item 2
+  - Subitem
+
+Punctuation guidance: [GOV.UK Style Guide - Bullet Points](https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#bullet-points-steps)
+
+### 3.2 Numbered Lists for Steps
+
+Use for sequential steps only:
 
 ```
-    $A
-    HM Revenue and Customs
-    Bradford
-    BD98 1YY
-    $A
+s1. Add numbers.
+s2. Check numbers.
+s3. Love numbers.
 ```
 
+s1. Add numbers.
+s2. Check numbers.
+s3. Love numbers.
+
+Leave 2 blank lines after the final step.
+
+### 3.3 Standard Numbered Lists
+
+```markdown
+1. First
+2. Second
+```
+
+1. First
+2. Second
+
+Indent sub-items by 2 spaces.
+
+## 4. Links
+
+### 4.1 Download Links
+
+Use '$D' to place download links in a box that shows users they're going to download a file. Always 
+include the file type and size in brackets as part of the link text and title.
+
+```
+$D
+[Download 'Jobcentre Plus form for employment' (PDF, 43KB)](http://example.com/example.pdf)
+$D
+```
+
+This is what download links look like:
+
+$D
+[Download 'Jobcentre Plus form for employment' (PDF, 43KB)]()
+$D
+
+When linking to PDFs, don't put the trailing slash '/' at the end, as the link won't work.
+
+This is only used for external download files. If the file is hosted on Whitehall, it should link to
+the splash page as an internal link.
+
+### 4.2 Email Links
+
+Use 'less than' (<) and 'greater than' (>) arrows around email addresses to make them a link.
+
+For example: 
+
+`<example@example.com>`
+
+Looks like this:
+
+example@example.com
+
+### 4.3 Section Anchor Links (Avoid)
+
+Avoid using in-page `#anchor` links unless absolutely necessary, as they raise accessibility concerns.
+
+## 5. Special Block Elements
+
+### 5.1 Addresses
+
+Wrap in `$A`:
+
+```
+$A
+HM Revenue and Customs
+Bradford
+BD98 1YY
+$A
+```
 This creates an address box, which looks like this:
 
 $A
@@ -40,96 +163,36 @@ Bradford
 BD98 1YY
 $A
 
-Do not use bold for the address title. This is not accessible because it looks like a heading and 
-can be confusing for users of assistive technology.
-
-## Bullets
-
-To create a bulleted list:
-
-use asterisks (*) to make bullets (hyphens also work) for example:
-  
-`* asterisk 1`
-
-`- hyphen 2`
-
-Looks like this:
-
-* asterisk 1
-- hyphen 2
-
-Indent by 2 spaces to create sub lists. For example:
+### 5.2 Contact Boxes
+Wrap in `$C`. Always include a call charges link if a phone number is present.
 
 ```
-* asterisk 1
-  * asterisk 2
+$C
+Financial Conduct Authority
+<consumer.queries@fca.org.uk>
+Telephone: 0800 111 6768
+Monday to Friday, 8am to 6pm
+Saturday, 9am to 1pm
+[Find out about call charges](/call-charges)
+$C
 ```
 
-Looks like this:
+This creates a contact box, which looks like this:
 
-* asterisk 1
-  * asterisk 2
-    
-make sure there is one space after the asterisk and leave 1 empty line space before the bullets 
-start, and one after.
+$C
+Financial Conduct Authority  
+<consumer.queries@fca.org.uk>  
+Telephone: 0800 111 6768  
+Monday to Friday, 8am to 6pm  
+Saturday, 9am to 1pm  
+[Find out about call charges](/call-charges)  
+$C
 
-See the style guide to check [how to punctuate bullets.](https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#bullet-points-steps)
+## 6. Callouts
 
-## Buttons
+### 6.1 Information
 
-### Default button
-
-To use a button the Markdown `{button}` followed by the button text in [], then the link in ().
-Close the button markdown by adding `{/button}` at the end.
-
-    {button}[Continue](https://gov.uk/random){/button}
-
-which looks like this:
-
-{button}[Continue](https://gov.uk/random){/button}
-
-
-### Start now button
-
-To turn a button into a ['Start now' button](https://www.gov.uk/service-manual/design/start-pages#start-page-elements), 
-you can add `start` to the button tag. These buttons should only appear once per page, and be used 
-at the start of a transaction.
-
-    {button start}[Start now](https://gov.uk/random){/button}
-
-which looks like this:
-
-{button start}[Start now](https://gov.uk/random){/button}
-
-
-### Cross domain tracking button
-
-You can add a Google Analytics [tracking id](https://support.google.com/analytics/answer/7372977?hl=en)
-which will send page views to another domain, this is used to help services understand the start of 
-their users journeys.
-
-    {button start cross-domain-tracking:UA-XXXXXX-Y}
-        [Start now](https://example.com/external-service/start-now)
-    {/button}
-
-which looks like this:
-
-{button start cross-domain-tracking:UA-XXXXXX-Y}
-  [Start now](https://example.com/external-service/start-now)
-{/button}
-
-## Callouts
-
-To draw attention to content, you can use callouts. For example, you can put some text in an 
-'information callout' to indicate that it's something related that's worth knowing, or doesn't fit
-the flow of the content. 
-
-Only use the more severe 'warning callout' to indicate serious consequences, such as a fine or 
-criminal proceedings.
-
-### Information callouts
-
-For information callouts, put `^` before and after the text you want to appear in the box.
+Use `^` markers:
 
     ^This is useful information that's worth knowing.^
 
@@ -137,9 +200,9 @@ This looks like:
 
 ^This is useful information that's worth knowing.^
 
-### Warning callouts
+### 6.2 Warnings
 
-For information callouts, put `%` before and after the text you want to appear in the box.
+Use `%` markers:
 
     %You will be fined or put in prison if you don't do this thing.%
 
@@ -147,9 +210,9 @@ This looks like:
 
 %You will be fined or put in prison if you don't do this thing.%
 
-### Example callout
+### 6.3 Example Boxes
 
-To create the example callout box use the Markdown $E above and below the link.
+Wrap in `$E`:
 
 ```
 $E
@@ -165,12 +228,9 @@ $E
 Open the pod bay doors.
 $E
 
-### Call to action
+### 6.4 Call to Action
 
-Call to action Markdown should be used for short links to actions, like applying for a licence. It 
-creates a tinted box which highlights the task.
-
-To create the call to action box use the Markdown $CTA above and below the link.
+Wrap in `$CTA`:
 
 ```
 $CTA
@@ -184,19 +244,66 @@ $CTA
   Some action
 $CTA
 
-## Charts
+## 7. Buttons
 
-Charts Markdown allows you to create 'simple', 'stacked' and 'compact' bar charts that can also 
-display negative values. You can combine these different types of chart within one chart.
+### 7.1 Standard Button
 
-Markdown lets the user switch between a bar chart and a table view on the webpage.
+To use a button add
 
-To create a chart, use the same Markdown as for a table, with an additional piece of charts Markdown
-on a line below the table.
+```
+    {button}[Continue](https://gov.uk/random){/button}
+```
 
-See the section on Tables for how to make tables in Markdown.
+which looks like this:
 
-### Simple barchart
+{button}[Continue](https://gov.uk/random){/button}
+
+
+### 7.2 "Start Now" Button
+
+To use a start button
+
+```
+    {button start}[Start now](https://gov.uk/random){/button}
+```
+
+which looks like this:
+
+{button start}[Start now](https://gov.uk/random){/button}
+
+Only one per page. Use at start of transaction.
+
+### 7.3 Cross-Domain Tracking Button
+
+You can add a Google Analytics [tracking id](https://support.google.com/analytics/answer/7372977?hl=en)
+which will send page views to another domain, this is used to help services understand the start of 
+their users journeys.
+
+```
+    {button start cross-domain-tracking:UA-XXXXXX-Y}
+        [Start now](https://example.com/external-service/start-now)
+    {/button}
+```
+
+which looks like this:
+
+{button start cross-domain-tracking:UA-XXXXXX-Y}
+  [Start now](https://example.com/external-service/start-now)
+{/button}
+
+## 8. Tables
+
+### 8.1 Creating Tables
+
+Use `kable()` from the `knitr` package.
+
+```{r rgovspeak-guide-table-1, echo=TRUE}
+kable(head(iris))
+```
+
+## 9 Charts
+
+### 9.1 Simple barchart
 
 Add {barchart} at the end of a numeric table to display a simple bar chart. Multiple columns will 
 display as grouped bars.
@@ -208,7 +315,7 @@ display as grouped bars.
 |Shop 3	|     18|
 {barchart}
 
-#### Clustered barchart
+### 9.2 Clustered barchart
 
 |Shop	  | Apples| Bananas| Plums|
 |:------|-------|--------|-----:|
@@ -221,7 +328,7 @@ display as grouped bars.
 {barchart}
 
 
-### Stacked barchart
+### 9.3 Stacked barchart
 
 Use {barchart stacked} for stacked bars. The final column is used to display the total.
 
@@ -232,7 +339,7 @@ Use {barchart stacked} for stacked bars. The final column is used to display the
 |Shop 3	|       60|	      22|	      10|	          8|	  100|
 {barchart stacked} 
 
-### Negative barchart
+### 9.4 Negative barchart
 
 If you have negative data values you must use {barchart negative} to display the chart correctly.
 
@@ -256,7 +363,7 @@ If you have negative data values you must use {barchart negative} to display the
 |Milk               |                             -6.4|
 {barchart negative}
 
-### Compact barchart
+### 9.5 Compact barchart
 
 If you want a compact version of a chart add compact to the barchart tag, 
 e.g. {barchart stacked compact}
@@ -268,7 +375,7 @@ e.g. {barchart stacked compact}
 |Shop 3	|       60|	      22|	      10|	          8|	  100|
 {barchart stacked compact} 
 
-### Colours in charts
+### 9.6 Colours in charts
 
 You can use up to 6 colours to represent different categories when you create a chart.
 The colours and the order they appear cannot be changed.
@@ -280,96 +387,9 @@ on the Government Analysis Function website.
 
 Read [colour contrast requirements under the WCAG2.1 guidelines](https://www.w3.org/WAI/WCAG21/Understanding/non-text-contrast.html).
 
-## Contacts
+## 10. Images
 
-To create the contact box use the Markdown $C above and below the text.
-
-```
-$C
-Financial Conduct Authority
-<consumer.queries@fca.org.uk>
-Telephone: 0800 111 6768
-Monday to Friday, 8am to 6pm
-Saturday, 9am to 1pm
-[Find out about call charges](/call-charges)
-$C
-```
-
-Remember to add a call charges link when there are telephone numbers.
-
-This creates a contact box, which looks like this:
-
-$C
-Financial Conduct Authority  
-<consumer.queries@fca.org.uk>  
-Telephone: 0800 111 6768  
-Monday to Friday, 8am to 6pm  
-Saturday, 9am to 1pm  
-[Find out about call charges](/call-charges)  
-$C
-
-Do not use bold for the contact team name. This is not accessible because it looks like a heading 
-and can be confusing for users of assistive technology. Use heading Markdown above the contact 
-Markdown instead if you need to draw attention to the information.
-
-### Download links
-
-Use '$D' to place download links in a box that shows users they're going to download a file. Always 
-include the file type and size in brackets as part of the link text and title.
-
-```
-$D
-[Download 'Jobcentre Plus form for employment' (PDF, 43KB)](http://example.com/example.pdf)
-$D
-```
-
-This is what download links look like:
-
-$D
-[Download 'Jobcentre Plus form for employment' (PDF, 43KB)]()
-$D
-
-When linking to PDFs, don't put the trailing slash '/' at the end, as the link won't work.
-
-This is only used for external download files. If the file is hosted on Whitehall, it should link to
-the splash page as an internal link.
-
-## Headings
-
-In the document body, use 2 hashtags (##) for a section heading and 3 or 4 hashtags for sub-headings. 
-These are called H2s, H3s and H4s. 
-
-Make sure you use heading level Markdown (the hashtags) rather than bold text - assistive technology
-lets users navigate to heading levels.
-
-Use the headings in sequence. An H3 needs to be preceded by an H2 and an H4 needs an H3.
-
-Do not use one hashtag, or you will get a title heading in the middle of your document.
-
-There's no need to use Markdown in the title and summary boxes. They are styled automatically.
-
-For example:
-
-`## This is an H2 subheading example`
-
-`### This is an H3 subheading example`
-
-`#### This is an H4 subheading example`
-    
-This is what they look like:
-
-## This is an H2 subheading example
-
-### This is an H3 subheading example
-
-#### This is an H4 subheading example
-
-There's more [guidance on headings in the content design manual.](https://www.gov.uk/guidance/content-design/writing-for-gov-uk#structuring-content)
-
-## Images
-
-Where possible the auto chart markdown should be used. This section is for charts uploaded as image 
-files.
+### 10.1 Creating Images from Code
 
 The rgovspeak package requires that each chart or image created in R is produced by a single code 
 chunk. This is because the chunk name is used to identify the image in the document and allows the 
@@ -384,13 +404,16 @@ for example api-figure-4.
 Example image:
 
 ```{r rgovspeak-guide-figure-1, echo=TRUE}
-df <- data.frame(x = rep(2011:2016, each = 3),
-                 y = sample(1:4, 18, replace = TRUE),
-                 colour = rep(LETTERS[1:3], 6))
+df <- data.frame(
+  x = rep(2011:2016, each = 3),
+  y = sample(1:4, 18, replace = TRUE),
+  colour = rep(LETTERS[1:3], 6)
+)
 
 ggplot(df, aes(x = x, y = y)) +
-        geom_col(position = "dodge",
-                 aes(fill = colour))
+  geom_col(position = "dodge", aes(fill = colour)) +
+  theme_af(legend = "bottom") +
+  scale_fill_discrete_af()
 ```
 
 Plot image files will by default be svg's created at 960 x 640 @ 72 dpi.
@@ -423,131 +446,4 @@ the formats are also generated.
 If your text or elements are too small in your chart it will be easier to increase the size of the 
 element in your plot call.
 
-### ggfbs
-
-To aid in producing compliant charts the ggfbs package has been created. 
-ggfbs is a package containing convenient functions to create publication ready charts with Defra's 
-Farm Business Survey (FBS) style. This package was built with and designed to work in conjunction 
-with ggplot2 and provides a set of templates to create basic chart whilst also allowing a deep level
-of customisation.
-
-```{r rgovspeak-guide-figure-2, echo = FALSE}
-if (requireNamespace("ggfbs", quietly = TRUE)) {
-  # Load libraries
-  library(dplyr)
-  library(ggplot2)
-  library(ggfbs)
-
-  # Read in some data
-  fbi_data <- read.csv(
-    "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1031993/fbs-farmbusinessincome-series_9nov21.csv"
-  )
-
-  # Manipulate dataset
-  plot_data <- fbi_data %>% 
-    filter(variable == "Farm Business Income", fbsyear %in% c("2019/20", "2020/21"))
-    
-  # Create basic grouped bar plot
-  plot_data %>% 
-    fbs_barplot(aes(x = factor_name, y = mean, fill = fbsyear))
-} else {
-  print("Install ggfbs to see this plot")
-}
-```
-
-You can find out more on the [ggfbs github page](https://github.com/Defra-Data-Science-Centre-of-Excellence/ggfbs).
-
-## Links
-
-To add internal links to GOV.UK pages, use square brackets [] around the link text and round 
-brackets () around the link URL. Make sure there are no spaces between the brackets or the link will not work.
-
-For example:
-
-`[GOV.UK style guide](https://www.gov.uk/guidance/style-guide)`
-
-Looks like this:
-
-[GOV.UK style guide](https://www.gov.uk/guidance/style-guide)
-
-### Email links
-Use 'less than' (<) and 'greater than' (>) arrows around email addresses to make them a link.
-
-For example: 
-
-`<example@example.com>`
-
-Looks like this:
-
-example@example.com
-
-### Linking to sections on a page
-
-You can use Markdown to link to particular section headings on a page - also known as an 'anchor link
-- but it creates accessibility issues so you should avoid it if possible.
-
-Read the guidance on using links in content before you use an anchor link.
-
-If you cannot avoid using an anchor link, format the link by adding # and the heading name, with all
-words separated by hyphens, to the page url. 
-
-For example, to link to the section 'Capacity management', 
-use https://www.gov.uk/government/publications/public-services-network-psn-service-management-good-practice/service-management-good-practice#capacity-management.
-
-## Numbered list
-
-Use numbers followed by a full stop, for example: 
-
-`1. A`
-
-`2. B`
-
-looks like this:
-
-1. A
-2. B
-
-Make sure there is one space after the full stop.
-
-You need 1 empty line space before the numbers start, and 1 at the end.
-
-Sub-items need an indent of 2 spaces.
-
-See the [style guide](https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style) to check how 
-to punctuate numbered lists.
-
-## Subscript and superscript
-
-For subscript, put `<sub>` before the word you want to appear in subscript, and `</sub>` afterwards.
-
-For example:
-
-`some text<sub>subscript</sub>`
-
-looks like this:
-
-some text<sub>subscript</sub>
-
-
-
-For superscript, put `<sup>` before the word you want to appear in superscript, and `</sup>` 
-afterwards.
-
-For example:
-
-`some text<sup>superscript</sup>`
-
-looks like this:
-
-some text<sup>superscript</sup> 
-
-You should use subscript and superscript for scientific notation and measurements, for example 
-chemical names, metres squared etc.
-
-## Tables
-
-Create tables in rmarkdown using the kable() function. This is a simple table generator.
-This is what that table looks like on GOV.UK:
-```{r echo=TRUE}
-kable(head(iris))
-```
+Use the [afchats](https://best-practice-and-impact.github.io/afcharts/index.html) package to maintain correct colour and formatting.
