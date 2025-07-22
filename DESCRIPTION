@@ -1,7 +1,7 @@
 Package: rgovspeak
 Type: Package
 Title: Allows govespeak markdown to be used in rmarkdown documents.
-Version: 1.0.2
+Version: 1.1.0
 Author: Mark Kirby [aut, cre]
 Description: Allows govespeak markdown to be used in rmarkdown documents.
     Creates a markdown file compatable with Whitehall publisher and provides
