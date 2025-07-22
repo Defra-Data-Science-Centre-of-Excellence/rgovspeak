@@ -6,9 +6,9 @@
 It provides a new output format for rmarkdown documents producing a whitehall publisher compatible markdown file and a html preview
 showing what the document will look like when published on gov.uk.
 
-🎉 **Version 1.0.2 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v1.0.2).
+🎉 **Version 1.1.0 out now!** [Check out the release notes here](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v1.1.0).
 
-This version of `rgovspeak` is a complete rewrite of the package. It now behaves like a standard RMarkdown template. 
+This version of `rgovspeak` updates the html preview to gov.uk 5.10.1.
 
 **Important**: Documents created with earlier versions will not be compatible and will require modification.
 
@@ -57,11 +57,11 @@ No need to learn whitehall publisher rgovspeak generates compatible files so you
 
 ## 💾 Install rgovspeak
 
-Download the latest [release](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v0.3) and install
+Download the latest [release](https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/releases/tag/v1.1.0) and install
 the package in r.
 
 ```r
-install.packages("~/Downloads/rgovspeak_1.0.zip", repos=NULL)
+install.packages("~/Downloads/rgovspeak_1.1.0.zip", repos=NULL)
 ```
 
 ## YAML Header Configuration
@@ -106,10 +106,67 @@ This configuration will render images in all specified formats and override the 
 
 **Note**: The default image format is now `svg`.
 
-#### Typical YAML Header Example 
+### Department YAML Flag
+
+You can specify which department the document is being published for by adding a `department` field to your YAML header. This will control the department logo and link shown in the output.
+
+Example:
 
     ---
     title: "Agricultural Price Index"
+    department: department_for_environment_food_rural_affairs
+    rgovspeak::govspeak: default
+    ---
+
+If you do not set the `department` field, it will default to `department_for_environment_food_rural_affairs`.
+
+#### Supported values for `department` include:
+
+- 10_downing_street
+- attorney_generals_office
+- cabinet_office
+- department_for_business_trade
+- department_for_culture_media_sport
+- department_for_education
+- department_for_energy_security_net_zero
+- department_for_environment_food_rural_affairs
+- department_for_science_innovation_technology
+- department_for_transport
+- department_for_work_pensions
+- department_of_health_social_care
+- foreign_commonwealth_development_office
+- hm_treasury
+- home_office
+- ministry_of_defence
+- ministry_of_housing_communities_local_government
+- ministry_of_justice
+- northern_ireland_office
+- office_of_the_advocate_general_for_scotland
+- office_of_the_leader_of_the_house_of_commons
+- office_of_the_leader_of_the_house_of_lords
+- scotland_office
+- uk_export_finance
+- wales_office
+
+### Caption
+
+You can update the caption above the title by setting the `caption` field to your YAML header.
+
+Example:
+
+    ---
+    title: "Agricultural Price Index"
+    caption: "Accredited official statistics"
+    department: department_for_environment_food_rural_affairs
+    rgovspeak::govspeak: default
+    ---
+
+### Typical YAML Header Example 
+
+    ---
+    title: "Your title"
+    caption: "Your caption"
+    department: "wales_office"
     output: 
       rgovspeak::govspeak: default
       word_document:
