@@ -446,4 +446,4 @@ the formats are also generated.
 If your text or elements are too small in your chart it will be easier to increase the size of the 
 element in your plot call.
 
-Use the [afchats](https://best-practice-and-impact.github.io/afcharts/index.html) package to maintain correct colour and formatting.
+Use the [afcharts](https://best-practice-and-impact.github.io/afcharts/index.html) package to maintain correct colour and formatting.
