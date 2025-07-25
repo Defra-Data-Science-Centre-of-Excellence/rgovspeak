@@ -9,7 +9,7 @@ Description: Allows govespeak markdown to be used in rmarkdown documents.
 License: MIT
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 BugReports: https://github.com/Defra-Data-Science-Centre-of-Excellence/rgovspeak/issues
 Imports: 
     fs,
