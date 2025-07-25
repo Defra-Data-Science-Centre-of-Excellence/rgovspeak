@@ -526,7 +526,7 @@ move_data_files_to_extension_dirs <- function(
 #' @param save_func The function to use for saving data.
 #' @param args_list List of arguments to pass to save_func.
 #' @return The result of save_func.
-#' #' @export
+#' @export
 save_data <- function(save_func, args_list) {
   # Detect the file name from args_list
   file_name <- NULL
@@ -632,12 +632,12 @@ convert_md <- function(input_file, renamed_images) {
     convert_callouts() |>
     remove_rmd_blocks()
 
-  # Remove HTML comments
-  govspeak_file <- gsub("<!--.*?-->", "", govspeak_file, perl = TRUE)
-
   if (!is.null(renamed_images)) {
     govspeak_file <- convert_image_tags(govspeak_file, renamed_images)
   }
+
+  # Remove HTML comments
+  govspeak_file <- gsub("<!--.*?-->", "", govspeak_file, perl = TRUE)
 
   govspeak_file
 }
