@@ -2,24 +2,18 @@
 % Please edit documentation in R/govspeak.R
 \name{convert_md}
 \alias{convert_md}
-\title{Convert Markdown to a rendered file}
+\title{Convert Markdown to a govspeak file}
 \usage{
 convert_md(input_file, renamed_images)
 }
 \arguments{
 \item{input_file}{The path to the input Markdown file.}
 
-\item{metadata}{The metadata for the conversion process.}
-
-\item{output_file}{The path to save the rendered file.}
-
-\item{clean}{A logical value indicating whether to clean the output directory before rendering.}
-
-\item{verbose}{A logical value indicating whether to display verbose output during the conversion process.}
+\item{renamed_images}{Data frame of renamed images (optional).}
 }
 \value{
-The path to the rendered file.
+The govspeak file as a string.
 }
 \description{
-This function converts a Markdown file to a govspeak file using the specified metadata.
+Convert Markdown to a govspeak file
 }
